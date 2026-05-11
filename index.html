@@ -1,1 +1,97 @@
-
+!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <meta name="description" content="Watch your salary grow in real-time.">
+ <meta name="keywords" content="salary calculator, real-time earnings, pay calculator">
+ <title>Salary Live Counter</title>
+ <style>
+ @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Noto+Sans+SC:wght@400;700&display=swap');
+ :root { --gold: #F9A825; --gold-dark: #F57F17; }
+ * { margin: 0; padding: 0; box-sizing: border-box; }
+ body {
+  font-family: 'Noto Sans SC', system-ui, sans-serif;
+  background: #1a1a2e; color: #e0e0e0;
+  min-height: 100vh; display: flex; flex-direction: column; align-items: center;
+  padding: 20px 10px; line-height: 1.6;
+ }
+ .container { max-width: 1100px; width: 100%; }
+header { text-align: center; margin-bottom: 30px; }
+h1 { font-size: 2.8rem; background: linear-gradient(90deg, #F9A825, #F57F17); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+.subtitle { color: #aaa; font-size: 1.1rem; }
+.input-section { background: #16213e; padding: 25px; border-radius: 16px; margin-bottom: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); display: flex; flex-direction: column; align-items: center; gap: 15px; }
+.salary-input { display: flex; align-items: center; gap: 15px; width: 100%; max-width: 420px; }
+input { flex: 1; padding: 16px 20px; font-size: 1.5rem; background: #0f1b2e; border: 2px solid #F9A825; border-radius: 12px; color: white; text-align: center; font-family: 'Roboto Mono', monospace; }
+input:focus { outline: none; box-shadow: 0 0 0 4px rgba(249,168,37,0.3); }
+button { padding: 16px 32px; font-size: 1.2rem; background: linear-gradient(135deg, #F9A825, #F57F17); color: #1a1a2e; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; transition: all 0.3s; }
+button:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(245,127,23,0.4); }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin-bottom: 30px; }
+.card { background: #16213e; padding: 24px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); text-align: center; }
+.card-label { color: #aaa; font-size: 1rem; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+.card-value { font-family: 'Roboto Mono', monospace; font-size: 2.4rem; font-weight: 700; color: var(--gold); min-height: 60px; display: flex; align-items: center; justify-content: center; }
+.today-earnings { background: linear-gradient(135deg, #1e2a4a, #16213e); padding: 30px; border-radius: 20px; text-align: center; margin-bottom: 30px; border: 2px solid #F9A825; }
+.today-label { font-size: 1.1rem; color: #ddd; margin-bottom: 12px; }
+.today-value { font-family: 'Roboto Mono', monospace; font-size: 3.8rem; font-weight: 700; color: #F9A825; text-shadow: 0 0 20px rgba(249,168,37,0.6); }
+.work-time { display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; margin-bottom: 30px; }
+.time-item { text-align: center; }
+.time-value { font-size: 1.8rem; color: #F9A825; }
+.ads-placeholder { background: #0f1b2e; border: 2px dashed #444; padding: 15px; text-align: center; color: #666; font-size: 0.85rem; border-radius: 8px; margin: 20px 0; }
+.unit { font-size: 1rem; color: #aaa; }
+footer { margin-top: auto; padding: 20px; text-align: center; color: #666; font-size: 0.9rem; }
+@media (max-width: 640px) { h1 { font-size: 2.2rem; } .card-value { font-size: 2rem; } .today-value { font-size: 2.8rem; } }
+</style>
+</head>
+<body>
+<div class="container">
+<header><h1>ð° å·¥èµå®æ¶è®¡ç®å¨</h1><p class="subtitle">Salary Live Counter â æ¯ä¸ç§é½å¨èµé±</p></header>
+<div class="input-section">
+<div class="salary-input"><input type="number" id="monthlySalary" placeholder="è¾å¥æèª" value="12000"><button onclick="startCalculation()">å¼å§è®¡ç®</button></div>
+<small style="color:#777;">æ¯æéæ¶ä¿®æ¹æèª</small>
+</div>
+<div class="work-settings" style="background:#0f1b2e;border-radius:12px;padding:16px 20px;margin:0 auto 30px;max-width:500px;display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap;border:1px solid rgba(249,168,37,0.2)">
+ <span style="color:#aaa;font-size:0.95rem;">â° å·¥ä½æ¶é´</span>
+ <label style="color:#ddd;font-size:0.9rem;">ä¸ç­ <input type="time" id="startTime" value="09:00" style="width:80px;padding:6px;background:#1a1a2e;border:1px solid #F9A825;border-radius:6px;color:white;font-size:0.9rem;text-align:center;margin:0 4px"></label>
+ <label style="color:#ddd;font-size:0.9rem;">ä¸ç­ <input type="time" id="endTime" value="18:00" style="width:80px;padding:6px;background:#1a1a2e;border:1px solid #F9A825;border-radius:6px;color:white;font-size:0.9rem;text-align:center;margin:0 4px"></label>
+ <button onclick="updateWorkHours()" style="padding:6px 14px;font-size:0.85rem;cursor:pointer;">åºç¨</button>
+</div>
+<div class="stats-grid">
+<div class="card"><div class="card-label">æ¥èª (22å·¥ä½æ¥)</div><div class="card-value" id="daily">0</div><div class="unit">å/å¤©</div></div>
+<div class="card"><div class="card-label">æ¶èª (8å°æ¶å¶)</div><div class="card-value" id="hourly">0</div><div class="unit">å/å°æ¶</div></div>
+<div class="card"><div class="card-label">æ¯åé</div><div class="card-value" id="perMinute">0</div><div class="unit">å/åé</div></div>
+<div class="card"><div class="card-label">æ¯ç§</div><div class="card-value" id="perSecond">0</div><div class="unit">å/ç§</div></div>
+</div>
+<div class="today-earnings">
+<div class="today-label">ä»å¤©å·²å·¥ä½ <span id="workHours">0</span> å°æ¶ Â· å·²èµ</div>
+<div class="today-value" id="todayEarnings">0.00</div>
+<div style="margin-top:12px;color:#F9A825;font-size:1.1rem" id="workStatus"></div>
+</div>
+<div class="work-time">
+<div class="time-item"><div style="color:#aaa">ä»æ¥å·¥ä½</div><div class="time-value" id="todayWorkTime">00:00:00</div></div>
+</div>
+<div class="ads-placeholder">ãGoogle AdSense å¹¿åä½ã</div>
+</div>
+<footer><p>ä»ä¾å¨±ä¹åè Â· æ°æ®å®æ¶æ´æ°</p></footer>
+<script>
+let monthlySalary=12000, perSecond=0, intervalId=null;
+document.getElementById('monthlySalary').addEventListener('keypress',function(e){if(e.key==='Enter')startCalculation()});
+function formatNumber(n,d=2){return n.toLocaleString('zh-CN',{minimumFractionDigits:d,maximumFractionDigits:d})}
+function calculateRates(s){const d=s/22,h=d/8,m=h/60,p=m/60;return{daily:d,hourly:h,perMinute:m,perSecond:p}}
+function updateBaseRates(){const r=calculateRates(monthlySalary);document.getElementById('daily').textContent=formatNumber(r.daily,2);document.getElementById('hourly').textContent=formatNumber(r.hourly,2);document.getElementById('perMinute').textContent=formatNumber(r.perMinute,3);document.getElementById('perSecond').textContent=formatNumber(r.perSecond,4);perSecond=r.perSecond}
+function getTodayWorkSeconds(){
+ const n=new Date();
+ const st=document.getElementById('startTime').value.split(':').map(Number);
+ const et=document.getElementById('endTime').value.split(':').map(Number);
+ const s=new Date(n.getFullYear(),n.getMonth(),n.getDate(),st[0],st[1],0);
+ const e=new Date(n.getFullYear(),n.getMonth(),n.getDate(),et[0],et[1],0);
+ if(n<s||n>e)return 0;
+ return Math.floor((n-s)/1000)}
+function updateWorkHours(){if(intervalId)clearInterval(intervalId);startCalculation()}
+function animateNumber(el,target){const current=parseFloat(el.textContent.replace(/,/g,''));if(isNaN(current)){el.textContent=formatNumber(target,2);return}const steps=20;const diff=target-current;let step=0;const timer=setInterval(()=>{step++;const progress=step/steps;const val=current+diff*progress;el.textContent=formatNumber(val,2);if(step>=steps){el.textContent=formatNumber(target,2);clearInterval(timer)}},30)}
+function updateLiveEarnings(){const s=getTodayWorkSeconds(),e=perSecond*s;animateNumber(document.getElementById('todayEarnings'),e);const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),c=s%60;document.getElementById('todayWorkTime').textContent=`${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${c.toString().padStart(2,'0')}`;document.getElementById('workHours').textContent=(s/3600).toFixed(1);document.getElementById('workStatus').textContent=s>0?`å·¥ä½è¿åº¦ ${Math.min((s/(8*3600))*100,100).toFixed(0)}%`:'è¿æ²¡å°ä¸ç­æ¶é´'}
+function startLiveUpdate(){if(intervalId)clearInterval(intervalId);updateBaseRates();updateLiveEarnings();intervalId=setInterval(updateLiveEarnings,1000)}
+function startCalculation(){const v=parseFloat(document.getElementById('monthlySalary').value);if(isNaN(v)||v<=0){alert('è¾å¥æææèª');return}monthlySalary=v;startLiveUpdate()}
+window.onload=function(){document.getElementById('monthlySalary').value=12000;startCalculation();document.getElementById('startTime').addEventListener('change',updateWorkHours);document.getElementById('endTime').addEventListener('change',updateWorkHours)}
+</script>
+</body>
+</html>
