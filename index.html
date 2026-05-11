@@ -1,4 +1,4 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
  <meta charset="UTF-8">
@@ -44,34 +44,34 @@ footer { margin-top: auto; padding: 20px; text-align: center; color: #666; font-
 </head>
 <body>
 <div class="container">
-<header><h1>ð° å·¥èµå®æ¶è®¡ç®å¨</h1><p class="subtitle">Salary Live Counter â æ¯ä¸ç§é½å¨èµé±</p></header>
+<header><h1>💰 工资实时计算器</h1><p class="subtitle">Salary Live Counter — 每一秒都在赚钱</p></header>
 <div class="input-section">
-<div class="salary-input"><input type="number" id="monthlySalary" placeholder="è¾å¥æèª" value="12000"><button onclick="startCalculation()">å¼å§è®¡ç®</button></div>
-<small style="color:#777;">æ¯æéæ¶ä¿®æ¹æèª</small>
+<div class="salary-input"><input type="number" id="monthlySalary" placeholder="输入月薪" value="12000"><button onclick="startCalculation()">开始计算</button></div>
+<small style="color:#777;">支持随时修改月薪</small>
 </div>
 <div class="work-settings" style="background:#0f1b2e;border-radius:12px;padding:16px 20px;margin:0 auto 30px;max-width:500px;display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap;border:1px solid rgba(249,168,37,0.2)">
- <span style="color:#aaa;font-size:0.95rem;">â° å·¥ä½æ¶é´</span>
- <label style="color:#ddd;font-size:0.9rem;">ä¸ç­ <input type="time" id="startTime" value="09:00" style="width:80px;padding:6px;background:#1a1a2e;border:1px solid #F9A825;border-radius:6px;color:white;font-size:0.9rem;text-align:center;margin:0 4px"></label>
- <label style="color:#ddd;font-size:0.9rem;">ä¸ç­ <input type="time" id="endTime" value="18:00" style="width:80px;padding:6px;background:#1a1a2e;border:1px solid #F9A825;border-radius:6px;color:white;font-size:0.9rem;text-align:center;margin:0 4px"></label>
- <button onclick="updateWorkHours()" style="padding:6px 14px;font-size:0.85rem;cursor:pointer;">åºç¨</button>
+ <span style="color:#aaa;font-size:0.95rem;">⏰ 工作时间</span>
+ <label style="color:#ddd;font-size:0.9rem;">上班 <input type="time" id="startTime" value="09:00" style="width:80px;padding:6px;background:#1a1a2e;border:1px solid #F9A825;border-radius:6px;color:white;font-size:0.9rem;text-align:center;margin:0 4px"></label>
+ <label style="color:#ddd;font-size:0.9rem;">下班 <input type="time" id="endTime" value="18:00" style="width:80px;padding:6px;background:#1a1a2e;border:1px solid #F9A825;border-radius:6px;color:white;font-size:0.9rem;text-align:center;margin:0 4px"></label>
+ <button onclick="updateWorkHours()" style="padding:6px 14px;font-size:0.85rem;cursor:pointer;">应用</button>
 </div>
 <div class="stats-grid">
-<div class="card"><div class="card-label">æ¥èª (22å·¥ä½æ¥)</div><div class="card-value" id="daily">0</div><div class="unit">å/å¤©</div></div>
-<div class="card"><div class="card-label">æ¶èª (8å°æ¶å¶)</div><div class="card-value" id="hourly">0</div><div class="unit">å/å°æ¶</div></div>
-<div class="card"><div class="card-label">æ¯åé</div><div class="card-value" id="perMinute">0</div><div class="unit">å/åé</div></div>
-<div class="card"><div class="card-label">æ¯ç§</div><div class="card-value" id="perSecond">0</div><div class="unit">å/ç§</div></div>
+<div class="card"><div class="card-label">日薪 (22工作日)</div><div class="card-value" id="daily">0</div><div class="unit">元/天</div></div>
+<div class="card"><div class="card-label">时薪 (8小时制)</div><div class="card-value" id="hourly">0</div><div class="unit">元/小时</div></div>
+<div class="card"><div class="card-label">每分钟</div><div class="card-value" id="perMinute">0</div><div class="unit">元/分钟</div></div>
+<div class="card"><div class="card-label">每秒</div><div class="card-value" id="perSecond">0</div><div class="unit">元/秒</div></div>
 </div>
 <div class="today-earnings">
-<div class="today-label">ä»å¤©å·²å·¥ä½ <span id="workHours">0</span> å°æ¶ Â· å·²èµ</div>
+<div class="today-label">今天已工作 <span id="workHours">0</span> 小时 · 已赚</div>
 <div class="today-value" id="todayEarnings">0.00</div>
 <div style="margin-top:12px;color:#F9A825;font-size:1.1rem" id="workStatus"></div>
 </div>
 <div class="work-time">
-<div class="time-item"><div style="color:#aaa">ä»æ¥å·¥ä½</div><div class="time-value" id="todayWorkTime">00:00:00</div></div>
+<div class="time-item"><div style="color:#aaa">今日工作</div><div class="time-value" id="todayWorkTime">00:00:00</div></div>
 </div>
-<div class="ads-placeholder">ãGoogle AdSense å¹¿åä½ã</div>
+<div class="ads-placeholder">【Google AdSense 广告位】</div>
 </div>
-<footer><p>ä»ä¾å¨±ä¹åè Â· æ°æ®å®æ¶æ´æ°</p></footer>
+<footer><p>仅供娱乐参考 · 数据实时更新</p></footer>
 <script>
 let monthlySalary=12000, perSecond=0, intervalId=null;
 document.getElementById('monthlySalary').addEventListener('keypress',function(e){if(e.key==='Enter')startCalculation()});
@@ -88,9 +88,9 @@ function getTodayWorkSeconds(){
  return Math.floor((n-s)/1000)}
 function updateWorkHours(){if(intervalId)clearInterval(intervalId);startCalculation()}
 function animateNumber(el,target){const current=parseFloat(el.textContent.replace(/,/g,''));if(isNaN(current)){el.textContent=formatNumber(target,2);return}const steps=20;const diff=target-current;let step=0;const timer=setInterval(()=>{step++;const progress=step/steps;const val=current+diff*progress;el.textContent=formatNumber(val,2);if(step>=steps){el.textContent=formatNumber(target,2);clearInterval(timer)}},30)}
-function updateLiveEarnings(){const s=getTodayWorkSeconds(),e=perSecond*s;animateNumber(document.getElementById('todayEarnings'),e);const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),c=s%60;document.getElementById('todayWorkTime').textContent=`${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${c.toString().padStart(2,'0')}`;document.getElementById('workHours').textContent=(s/3600).toFixed(1);document.getElementById('workStatus').textContent=s>0?`å·¥ä½è¿åº¦ ${Math.min((s/(8*3600))*100,100).toFixed(0)}%`:'è¿æ²¡å°ä¸ç­æ¶é´'}
+function updateLiveEarnings(){const s=getTodayWorkSeconds(),e=perSecond*s;animateNumber(document.getElementById('todayEarnings'),e);const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),c=s%60;document.getElementById('todayWorkTime').textContent=`${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${c.toString().padStart(2,'0')}`;document.getElementById('workHours').textContent=(s/3600).toFixed(1);document.getElementById('workStatus').textContent=s>0?`工作进度 ${Math.min((s/(8*3600))*100,100).toFixed(0)}%`:'还没到上班时间'}
 function startLiveUpdate(){if(intervalId)clearInterval(intervalId);updateBaseRates();updateLiveEarnings();intervalId=setInterval(updateLiveEarnings,1000)}
-function startCalculation(){const v=parseFloat(document.getElementById('monthlySalary').value);if(isNaN(v)||v<=0){alert('è¾å¥æææèª');return}monthlySalary=v;startLiveUpdate()}
+function startCalculation(){const v=parseFloat(document.getElementById('monthlySalary').value);if(isNaN(v)||v<=0){alert('输入有效月薪');return}monthlySalary=v;startLiveUpdate()}
 window.onload=function(){document.getElementById('monthlySalary').value=12000;startCalculation();document.getElementById('startTime').addEventListener('change',updateWorkHours);document.getElementById('endTime').addEventListener('change',updateWorkHours)}
 </script>
 </body>
