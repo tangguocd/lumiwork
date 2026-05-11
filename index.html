@@ -40,11 +40,40 @@ button:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(245,127
 .unit { font-size: 1rem; color: #aaa; }
 footer { margin-top: auto; padding: 20px; text-align: center; color: #666; font-size: 0.9rem; }
 @media (max-width: 640px) { h1 { font-size: 2.2rem; } .card-value { font-size: 2rem; } .today-value { font-size: 2.8rem; } }
+
+@media (max-width: 640px) {
+ .container { padding: 0 8px; }
+ h1 { font-size: 1.8rem; }
+ .subtitle { font-size: 0.9rem; }
+ .input-section { padding: 16px; }
+ .salary-input { flex-direction: column; gap: 8px; }
+ input { font-size: 1.2rem; padding: 12px; width: 100%; }
+ button { width: 100%; padding: 14px; font-size: 1rem; }
+ .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+ .card { padding: 14px; }
+ .card-value { font-size: 1.5rem; min-height: 40px; }
+ .card-label { font-size: 0.8rem; }
+ .unit { font-size: 0.8rem; }
+ .today-earnings { padding: 18px; }
+ .today-value { font-size: 2rem; }
+ .today-label { font-size: 0.9rem; }
+ .work-time { gap: 20px; }
+ .time-value { font-size: 1.3rem; }
+ .work-settings { flex-direction: column; gap: 10px; padding: 12px; }
+ .work-settings label { width: 100%; display: flex; justify-content: center; }
+}
+
 </style>
 </head>
 <body>
 <div class="container">
-<header><h1>💰 工资实时计算器</h1><p class="subtitle">Salary Live Counter — 每一秒都在赚钱</p></header>
+<header>
+<div style="text-align:right;margin-bottom:8px">
+ <button id="langBtn" onclick="switchLang()" style="padding:4px 10px;font-size:0.8rem;background:transparent;border:1px solid #F9A825;color:#F9A825;border-radius:6px;cursor:pointer;">🌐 EN</button>
+</div>
+<h1 id="title">💰 Salary Live Counter</h1>
+<p id="subtitle" class="subtitle">See your earnings grow in real-time</p>
+</header>
 <div class="input-section">
 <div class="salary-input"><input type="number" id="monthlySalary" placeholder="输入月薪" value="12000"><button onclick="startCalculation()">开始计算</button></div>
 <small style="color:#777;">支持随时修改月薪</small>
@@ -92,6 +121,63 @@ function updateLiveEarnings(){const s=getTodayWorkSeconds(),e=perSecond*s;animat
 function startLiveUpdate(){if(intervalId)clearInterval(intervalId);updateBaseRates();updateLiveEarnings();intervalId=setInterval(updateLiveEarnings,1000)}
 function startCalculation(){const v=parseFloat(document.getElementById('monthlySalary').value);if(isNaN(v)||v<=0){alert('输入有效月薪');return}monthlySalary=v;startLiveUpdate()}
 window.onload=function(){document.getElementById('monthlySalary').value=12000;startCalculation();document.getElementById('startTime').addEventListener('change',updateWorkHours);document.getElementById('endTime').addEventListener('change',updateWorkHours)}
+
+// i18n
+const langData = {
+  zh: {
+    title: '💰 工资实时计算器',
+    subtitle: '每一秒都在赚钱',
+    monthlyLabel: '输入月薪 (元)',
+    startBtn: '开始计算',
+    hint: '支持随时修改月薪',
+    daily: '日薪 (22工作日)',
+    hourly: '时薪 (8小时制)',
+    perMin: '每分钟',
+    perSec: '每秒',
+    todayEarned: '今天已工作',
+    hours: '小时',
+    earned: '已赚',
+    progress: '工作进度',
+    notWork: '还没到上班时间',
+    workTime: '今日工作',
+    workHours: '工作时间',
+    startLabel: '上班',
+    endLabel: '下班',
+    apply: '应用',
+    ads: '【Google AdSense 广告位】',
+    footer: '仅供娱乐参考 · 数据实时更新'
+  },
+  en: {
+    title: '💰 Salary Live Counter',
+    subtitle: 'See your earnings grow in real-time',
+    monthlyLabel: 'Monthly Salary ($)',
+    startBtn: 'Start',
+    hint: 'Change anytime',
+    daily: 'Daily (22 days)',
+    hourly: 'Hourly (8hr)',
+    perMin: 'Per Minute',
+    perSec: 'Per Second',
+    todayEarned: 'Worked today',
+    hours: 'hrs',
+    earned: 'Earned',
+    progress: 'Work progress',
+    notWork: 'Not working yet',
+    workTime: 'Today',
+    startLabel: 'Start',
+    endLabel: 'End',
+    apply: 'Apply',
+    ads: '【Google AdSense Ad】',
+    footer: 'For fun · Real-time data'
+  }
+};
+let currentLang = 'en';
+function switchLang() {
+  currentLang = currentLang === 'en' ? 'zh' : 'en';
+  const d = langData[currentLang];
+  document.getElementById('title').textContent = d.title;
+  document.getElementById('subtitle').textContent = d.subtitle;
+  document.getElementById('langBtn').textContent = currentLang === 'en' ? '🌐 中' : '🌐 EN';
+}
 </script>
 </body>
 </html>
