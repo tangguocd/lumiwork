@@ -14,11 +14,7 @@
             --gold-dark: #F57F17;
         }
         
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
@@ -26,13 +22,9 @@
             color: #e0e0e0;
             min-height: 100vh;
             padding: 20px;
-            line-height: 1.5;
         }
         
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+        .container { max-width: 1200px; margin: 0 auto; }
         
         header {
             display: flex;
@@ -44,7 +36,7 @@
         }
         
         .title {
-            font-size: 2.2rem;
+            font-size: 2.3rem;
             font-weight: 700;
             background: linear-gradient(90deg, #F9A825, #F57F17);
             -webkit-background-clip: text;
@@ -78,9 +70,7 @@
         }
         
         @media (max-width: 992px) {
-            .main {
-                grid-template-columns: 1fr;
-            }
+            .main { grid-template-columns: 1fr; }
         }
         
         .input-panel {
@@ -97,9 +87,7 @@
         }
         
         @media (max-width: 768px) {
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
+            .stats-grid { grid-template-columns: 1fr; }
         }
         
         .card {
@@ -116,17 +104,11 @@
             box-shadow: 0 15px 35px rgba(249, 168, 37, 0.15);
         }
         
-        .card-label {
-            font-size: 0.95rem;
-            color: #aaa;
-            margin-bottom: 8px;
-        }
-        
-        .card-value {
-            font-size: 1.85rem;
-            font-weight: 700;
-            color: var(--gold);
-            transition: all 0.4s ease;
+        .card-label { font-size: 0.95rem; color: #aaa; margin-bottom: 8px; }
+        .card-value { 
+            font-size: 1.85rem; 
+            font-weight: 700; 
+            color: var(--gold); 
         }
         
         .today-earnings {
@@ -139,64 +121,39 @@
             box-shadow: 0 0 40px rgba(249, 168, 37, 0.3);
         }
         
-        .today-label {
-            font-size: 1.1rem;
-            color: #ddd;
-            margin-bottom: 10px;
-        }
-        
+        .today-label { font-size: 1.1rem; color: #ddd; margin-bottom: 10px; }
         .today-amount {
             font-size: 3.2rem;
             font-weight: 800;
             color: #F9A825;
-            text-shadow: 0 0 25px #F9A825,
-                         0 0 40px #F57F17;
-            margin: 10px 0;
-            transition: all 0.3s ease;
+            text-shadow: 0 0 25px #F9A825, 0 0 40px #F57F17;
+            margin: 12px 0;
         }
         
-        .progress-container {
-            margin-top: 20px;
-        }
-        
+        .progress-container { margin-top: 20px; }
         .progress-label {
             display: flex;
             justify-content: space-between;
             font-size: 0.95rem;
             margin-bottom: 8px;
         }
-        
         .progress-bar {
             height: 12px;
             background: #334155;
             border-radius: 9999px;
             overflow: hidden;
         }
-        
         .progress-fill {
             height: 100%;
             background: linear-gradient(90deg, #F9A825, #F57F17);
             width: 0%;
             transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-            border-radius: 9999px;
         }
         
-        .inputs {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
+        .inputs { display: flex; flex-direction: column; gap: 20px; }
+        .input-group { display: flex; flex-direction: column; gap: 8px; }
         
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        
-        label {
-            font-weight: 500;
-            color: #ccc;
-        }
+        label { font-weight: 500; color: #ccc; }
         
         input {
             padding: 14px 16px;
@@ -205,7 +162,6 @@
             border-radius: 12px;
             color: white;
             font-size: 1.1rem;
-            transition: border 0.3s;
         }
         
         input:focus {
@@ -219,13 +175,6 @@
             gap: 15px;
         }
         
-        footer {
-            text-align: center;
-            margin-top: 40px;
-            color: #666;
-            font-size: 0.9rem;
-        }
-        
         .adsense {
             margin: 30px auto;
             max-width: 728px;
@@ -237,13 +186,9 @@
             align-items: center;
             justify-content: center;
             color: #777;
-            font-size: 0.9rem;
         }
         
-        .unit {
-            font-size: 0.95rem;
-            color: #aaa;
-        }
+        footer { text-align: center; margin-top: 40px; color: #666; font-size: 0.9rem; }
     </style>
 </head>
 <body>
@@ -256,7 +201,7 @@
         </header>
 
         <div class="main">
-            <!-- Input Panel -->
+            <!-- 输入面板 -->
             <div class="input-panel">
                 <div class="inputs">
                     <div class="input-group">
@@ -266,7 +211,12 @@
                             <input type="number" id="monthly-salary" value="12000" style="padding-left: 50px; width: 100%;">
                         </div>
                     </div>
-                    
+
+                    <div class="input-group">
+                        <label id="workdays-label">Working Days per Month</label>
+                        <input type="number" id="workdays" value="22" min="1" max="31">
+                    </div>
+
                     <div class="time-inputs">
                         <div class="input-group">
                             <label id="start-label">Start Time</label>
@@ -296,52 +246,44 @@
                 </div>
             </div>
 
-            <!-- Stats -->
+            <!-- 统计卡片 -->
             <div>
                 <div class="stats-grid">
-                    <!-- Daily -->
                     <div class="card">
                         <div class="card-label" id="daily-label">Daily</div>
-                        <div class="card-value" id="daily-value">$400.00</div>
-                        <div class="unit" id="daily-unit">¥/day</div>
+                        <div class="card-value" id="daily-value">$545.45</div>
+                        <div class="unit" id="daily-unit">$/day</div>
                     </div>
-                    
-                    <!-- Hourly -->
                     <div class="card">
                         <div class="card-label" id="hourly-label">Hourly</div>
-                        <div class="card-value" id="hourly-value">$50.00</div>
-                        <div class="unit" id="hourly-unit">¥/hr</div>
+                        <div class="card-value" id="hourly-value">$60.61</div>
+                        <div class="unit" id="hourly-unit">$/hr</div>
                     </div>
-                    
-                    <!-- Per Minute -->
                     <div class="card">
                         <div class="card-label" id="minute-label">Per Minute</div>
-                        <div class="card-value" id="minute-value">$0.83</div>
-                        <div class="unit" id="minute-unit">¥/min</div>
+                        <div class="card-value" id="minute-value">$1.01</div>
+                        <div class="unit" id="minute-unit">$/min</div>
                     </div>
-                    
-                    <!-- Per Second -->
                     <div class="card">
                         <div class="card-label" id="second-label">Per Second</div>
-                        <div class="card-value" id="second-value">$0.014</div>
-                        <div class="unit" id="second-unit">¥/sec</div>
+                        <div class="card-value" id="second-value">$0.017</div>
+                        <div class="unit" id="second-unit">$/sec</div>
                     </div>
                 </div>
 
                 <div style="margin-top: 25px; background: var(--card); border-radius: 16px; padding: 20px; font-size: 0.95rem; color: #bbb;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;" id="work-hours-row">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
                         <span id="work-hours-label">Working hours per day:</span>
                         <span id="work-hours-value">9.0 hours</span>
                     </div>
-                    <div style="display: flex; justify-content: space-between;" id="days-month-row">
-                        <span id="days-month-label">Assuming 30 days/month</span>
-                        <span>30</span>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span id="workdays-bottom-label">Working days per month:</span>
+                        <span id="workdays-bottom-value">22 days</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Ad placeholder -->
         <div class="adsense">
             Google AdSense Placeholder
         </div>
@@ -352,12 +294,12 @@
     </div>
 
     <script>
-        // Language data
         const translations = {
             en: {
                 pageTitle: "Salary Live Counter",
                 langText: "中文",
                 monthlyLabel: "Monthly Salary",
+                workdaysLabel: "Working Days per Month",
                 startLabel: "Start Time",
                 endLabel: "End Time",
                 todayLabel: "Today's Earnings",
@@ -371,12 +313,13 @@
                 minuteUnit: "$/min",
                 secondUnit: "$/sec",
                 workHoursLabel: "Working hours per day:",
-                daysMonthLabel: "Assuming 30 days/month"
+                workdaysBottomLabel: "Working days per month:"
             },
             zh: {
                 pageTitle: "工资实时计算器",
                 langText: "English",
                 monthlyLabel: "月薪",
+                workdaysLabel: "每月工作天数",
                 startLabel: "上班时间",
                 endLabel: "下班时间",
                 todayLabel: "今日已赚",
@@ -390,34 +333,99 @@
                 minuteUnit: "元/分钟",
                 secondUnit: "元/秒",
                 workHoursLabel: "每日工作时长：",
-                daysMonthLabel: "按每月30天计算"
+                workdaysBottomLabel: "每月工作天数："
             }
         };
 
         let currentLang = 'en';
-        let monthlySalary = 12000;
-        let startHour = 9;
-        let startMinute = 0;
-        let endHour = 18;
-        let endMinute = 0;
         let currency = '$';
 
-        // DOM elements
+        // DOM
         const monthlyInput = document.getElementById('monthly-salary');
+        const workdaysInput = document.getElementById('workdays');
         const startTimeInput = document.getElementById('start-time');
         const endTimeInput = document.getElementById('end-time');
         const langBtn = document.getElementById('lang-btn');
-        const langText = document.getElementById('lang-text');
 
-        // Update language
+        function parseTime(timeStr) {
+            const [h, m] = timeStr.split(':').map(Number);
+            return { hour: h, minute: m };
+        }
+
+        function calculateRates() {
+            const monthly = parseFloat(monthlyInput.value) || 12000;
+            const workdays = parseFloat(workdaysInput.value) || 22;
+            
+            const start = parseTime(startTimeInput.value);
+            const end = parseTime(endTimeInput.value);
+            
+            const workMinutes = (end.hour * 60 + end.minute) - (start.hour * 60 + start.minute);
+            const workHours = Math.max(workMinutes / 60, 0.5);
+            
+            const daily = monthly / workdays;
+            const hourly = daily / workHours;
+            const perMinute = hourly / 60;
+            const perSecond = perMinute / 60;
+            
+            return { daily, hourly, perMinute, perSecond, workHours, workdays };
+        }
+
+        function formatMoney(num) {
+            return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function getTodayEarnings(rates) {
+            const now = new Date();
+            const currentMinutes = now.getHours() * 60 + now.getMinutes();
+            const startMinutes = parseTime(startTimeInput.value).hour * 60 + parseTime(startTimeInput.value).minute;
+            const endMinutes = parseTime(endTimeInput.value).hour * 60 + parseTime(endTimeInput.value).minute;
+            
+            let elapsed = 0;
+            if (currentMinutes > startMinutes && currentMinutes < endMinutes) {
+                elapsed = currentMinutes - startMinutes;
+            } else if (currentMinutes >= endMinutes) {
+                elapsed = endMinutes - startMinutes;
+            }
+            
+            const earnings = elapsed * rates.perMinute;
+            const progress = Math.min((elapsed / (rates.workHours * 60)) * 100, 100);
+            
+            return { earnings: Math.max(0, earnings), progress: Math.max(0, progress) };
+        }
+
+        function updateDisplay() {
+            const rates = calculateRates();
+            const today = getTodayEarnings(rates);
+            
+            document.getElementById('daily-value').textContent = currency + formatMoney(rates.daily);
+            document.getElementById('hourly-value').textContent = currency + formatMoney(rates.hourly);
+            document.getElementById('minute-value').textContent = currency + formatMoney(rates.perMinute);
+            document.getElementById('second-value').textContent = currency + formatMoney(rates.perSecond);
+            
+            document.getElementById('today-amount').textContent = currency + formatMoney(today.earnings);
+            document.getElementById('progress-fill').style.width = today.progress + '%';
+            document.getElementById('progress-percent').textContent = Math.round(today.progress) + '%';
+            
+            document.getElementById('work-hours-value').textContent = rates.workHours.toFixed(1) + ' hours';
+            document.getElementById('workdays-bottom-value').textContent = rates.workdays + ' days';
+            
+            // 更新单位
+            const isZh = currentLang === 'zh';
+            document.getElementById('daily-unit').textContent = isZh ? '元/天' : '$/day';
+            document.getElementById('hourly-unit').textContent = isZh ? '元/小时' : '$/hr';
+            document.getElementById('minute-unit').textContent = isZh ? '元/分钟' : '$/min';
+            document.getElementById('second-unit').textContent = isZh ? '元/秒' : '$/sec';
+        }
+
         function updateLanguage(lang) {
             currentLang = lang;
             const t = translations[lang];
             
             document.getElementById('page-title').textContent = t.pageTitle;
-            langText.textContent = t.langText;
+            document.getElementById('lang-text').textContent = t.langText;
             
             document.getElementById('monthly-label').textContent = t.monthlyLabel;
+            document.getElementById('workdays-label').textContent = t.workdaysLabel;
             document.getElementById('start-label').textContent = t.startLabel;
             document.getElementById('end-label').textContent = t.endLabel;
             document.getElementById('today-label').textContent = t.todayLabel;
@@ -428,120 +436,21 @@
             document.getElementById('minute-label').textContent = t.minuteLabel;
             document.getElementById('second-label').textContent = t.secondLabel;
             
-            // Units will be updated in render function
             document.getElementById('work-hours-label').textContent = t.workHoursLabel;
-            document.getElementById('days-month-label').textContent = t.daysMonthLabel;
+            document.getElementById('workdays-bottom-label').textContent = t.workdaysBottomLabel;
         }
 
-        // Parse time
-        function parseTime(timeStr) {
-            const [h, m] = timeStr.split(':').map(Number);
-            return { hour: h, minute: m };
-        }
-
-        // Calculate rates
-        function calculateRates() {
-            monthlySalary = parseFloat(monthlyInput.value) || 12000;
+        function init() {
+            document.getElementById('currency-symbol').textContent = currency;
+            updateLanguage('en');
             
-            const start = parseTime(startTimeInput.value);
-            const end = parseTime(endTimeInput.value);
+            // 事件监听
+            [monthlyInput, workdaysInput, startTimeInput, endTimeInput].forEach(el => {
+                el.addEventListener('input', updateDisplay);
+                el.addEventListener('change', updateDisplay);
+            });
             
-            startHour = start.hour;
-            startMinute = start.minute;
-            endHour = end.hour;
-            endMinute = end.minute;
-            
-            const workMinutes = (endHour * 60 + endMinute) - (startHour * 60 + startMinute);
-            const workHours = Math.max(workMinutes / 60, 0.5);
-            
-            // Daily salary (30 days)
-            const daily = monthlySalary / 30;
-            const hourly = daily / workHours;
-            const perMinute = hourly / 60;
-            const perSecond = perMinute / 60;
-            
-            return {
-                daily: daily,
-                hourly: hourly,
-                perMinute: perMinute,
-                perSecond: perSecond,
-                workHours: workHours
-            };
-        }
-
-        // Format number with commas and 2 decimals
-        function formatMoney(num) {
-            return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        }
-
-        // Get today's earnings
-        function getTodayEarnings(rates) {
-            const now = new Date();
-            const currentHour = now.getHours();
-            const currentMinute = now.getMinutes();
-            const currentTotalMinutes = currentHour * 60 + currentMinute;
-            
-            const startTotalMinutes = startHour * 60 + startMinute;
-            const endTotalMinutes = endHour * 60 + endMinute;
-            
-            let elapsedMinutes = 0;
-            
-            if (currentTotalMinutes > startTotalMinutes && currentTotalMinutes < endTotalMinutes) {
-                elapsedMinutes = currentTotalMinutes - startTotalMinutes;
-            } else if (currentTotalMinutes >= endTotalMinutes) {
-                elapsedMinutes = endTotalMinutes - startTotalMinutes; // finished
-            }
-            
-            const earnings = elapsedMinutes * rates.perMinute;
-            const progress = Math.min(Math.max((elapsedMinutes / (rates.workHours * 60)) * 100, 0), 100);
-            
-            return { earnings, progress };
-        }
-
-        // Main render function
-        function updateDisplay() {
-            const rates = calculateRates();
-            const today = getTodayEarnings(rates);
-            
-            // Update cards
-            document.getElementById('daily-value').textContent = currency + formatMoney(rates.daily);
-            document.getElementById('hourly-value').textContent = currency + formatMoney(rates.hourly);
-            document.getElementById('minute-value').textContent = currency + formatMoney(rates.perMinute);
-            document.getElementById('second-value').textContent = currency + formatMoney(rates.perSecond);
-            
-            // Update today
-            document.getElementById('today-amount').textContent = currency + formatMoney(today.earnings);
-            
-            // Progress
-            document.getElementById('progress-fill').style.width = today.progress + '%';
-            document.getElementById('progress-percent').textContent = Math.round(today.progress) + '%';
-            
-            // Work hours
-            document.getElementById('work-hours-value').textContent = rates.workHours.toFixed(1) + ' hours';
-            
-            // Update units based on language
-            const isZh = currentLang === 'zh';
-            document.getElementById('daily-unit').textContent = isZh ? '元/天' : '$/day';
-            document.getElementById('hourly-unit').textContent = isZh ? '元/小时' : '$/hr';
-            document.getElementById('minute-unit').textContent = isZh ? '元/分钟' : '$/min';
-            document.getElementById('second-unit').textContent = isZh ? '元/秒' : '$/sec';
-        }
-
-        // Real-time loop
-        function startLiveCounter() {
-            updateDisplay();
-            setInterval(() => {
-                updateDisplay();
-            }, 1000);
-        }
-
-        // Event listeners
-        function initListeners() {
-            monthlyInput.addEventListener('input', updateDisplay);
-            startTimeInput.addEventListener('change', updateDisplay);
-            endTimeInput.addEventListener('change', updateDisplay);
-            
-            langBtn.addEventListener('click', () => {
+            document.getElementById('lang-btn').addEventListener('click', () => {
                 const newLang = currentLang === 'en' ? 'zh' : 'en';
                 currency = newLang === 'zh' ? '¥' : '$';
                 document.getElementById('currency-symbol').textContent = currency;
@@ -549,23 +458,9 @@
                 updateDisplay();
             });
             
-            // Keyboard support for number input
-            monthlyInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') updateDisplay();
-            });
-        }
-
-        // Initialize
-        function init() {
-            // Set initial currency
-            document.getElementById('currency-symbol').textContent = currency;
-            
-            updateLanguage('en');
-            initListeners();
-            startLiveCounter();
-            
-            // Initial render
-            setTimeout(updateDisplay, 300);
+            // 启动实时更新
+            setInterval(updateDisplay, 1000);
+            updateDisplay();
         }
 
         window.onload = init;
