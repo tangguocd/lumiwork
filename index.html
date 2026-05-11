@@ -79,9 +79,9 @@ footer { margin-top: auto; padding: 20px; text-align: center; color: #666; font-
 <small style="color:#777;">支持随时修改月薪</small>
 </div>
 <div class="work-settings" style="background:#0f1b2e;border-radius:12px;padding:16px 20px;margin:0 auto 30px;max-width:500px;display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap;border:1px solid rgba(249,168,37,0.2)">
- <span style="color:#aaa;font-size:0.95rem;">⏰ 工作时间</span>
- <label style="color:#ddd;font-size:0.9rem;">上班 <input type="time" id="startTime" value="09:00" style="width:80px;padding:6px;background:#1a1a2e;border:1px solid #F9A825;border-radius:6px;color:white;font-size:0.9rem;text-align:center;margin:0 4px"></label>
- <label style="color:#ddd;font-size:0.9rem;">下班 <input type="time" id="endTime" value="18:00" style="width:80px;padding:6px;background:#1a1a2e;border:1px solid #F9A825;border-radius:6px;color:white;font-size:0.9rem;text-align:center;margin:0 4px"></label>
+ <span style="color:#aaa;font-size:0.95rem;">⏰</span>
+ <label style="color:#ddd;font-size:0.9rem;"><span id="startLabel">Start</span> <input type="time" id="startTime" value="09:00" style="width:80px;padding:6px;background:#1a1a2e;border:1px solid #F9A825;border-radius:6px;color:white;font-size:0.9rem;text-align:center;margin:0 4px"></label>
+ <label style="color:#ddd;font-size:0.9rem;"><span id="endLabel">End</span> <input type="time" id="endTime" value="18:00" style="width:80px;padding:6px;background:#1a1a2e;border:1px solid #F9A825;border-radius:6px;color:white;font-size:0.9rem;text-align:center;margin:0 4px"></label>
  <button onclick="updateWorkHours()" style="padding:6px 14px;font-size:0.85rem;cursor:pointer;">应用</button>
 </div>
 <div class="stats-grid">
@@ -91,16 +91,16 @@ footer { margin-top: auto; padding: 20px; text-align: center; color: #666; font-
 <div class="card"><div class="card-label">每秒</div><div class="card-value" id="perSecond">0</div><div class="unit">元/秒</div></div>
 </div>
 <div class="today-earnings">
-<div class="today-label">今天已工作 <span id="workHours">0</span> 小时 · 已赚</div>
+<div class="today-label"><span id="todayLabel">Worked today</span> <span id="workHours">0</span> <span id="hoursLabel">hrs</span> &middot; <span id="earnedLabel">Earned</span></div>
 <div class="today-value" id="todayEarnings">0.00</div>
 <div style="margin-top:12px;color:#F9A825;font-size:1.1rem" id="workStatus"></div>
 </div>
 <div class="work-time">
-<div class="time-item"><div style="color:#aaa">今日工作</div><div class="time-value" id="todayWorkTime">00:00:00</div></div>
+<div class="time-item"><div style="color:#aaa" id="timeLabel">Today</div><div class="time-value" id="todayWorkTime">00:00:00</div></div>
 </div>
-<div class="ads-placeholder">【Google AdSense 广告位】</div>
+<div class="ads-placeholder" id="adsText">【Google AdSense Ad】</div>
 </div>
-<footer><p>仅供娱乐参考 · 数据实时更新</p></footer>
+<footer><p id="footerText">For fun &middot; Real-time data</p></footer>
 <script>
 let monthlySalary=12000, perSecond=0, intervalId=null;
 document.getElementById('monthlySalary').addEventListener('keypress',function(e){if(e.key==='Enter')startCalculation()});
@@ -128,24 +128,21 @@ const langData = {
     title: '💰 工资实时计算器',
     subtitle: '每一秒都在赚钱',
     monthlyLabel: '输入月薪 (元)',
-    startBtn: '开始计算',
+    startBtn: '开始',
     hint: '支持随时修改月薪',
     daily: '日薪 (22工作日)',
-    hourly: '时薪 (8小时制)',
+    hourly: '时薪 (8小时)',
     perMin: '每分钟',
     perSec: '每秒',
-    todayEarned: '今天已工作',
+    todayLabel: '今天已工作',
     hours: '小时',
     earned: '已赚',
     progress: '工作进度',
     notWork: '还没到上班时间',
-    workTime: '今日工作',
-    workHours: '工作时间',
-    startLabel: '上班',
-    endLabel: '下班',
-    apply: '应用',
+    timeLabel: '今日工作',
     ads: '【Google AdSense 广告位】',
-    footer: '仅供娱乐参考 · 数据实时更新'
+    footer: '仅供娱乐参考 · 数据实时更新',
+    startWork: '上班', endWork: '下班', apply: '应用'
   },
   en: {
     title: '💰 Salary Live Counter',
@@ -157,26 +154,39 @@ const langData = {
     hourly: 'Hourly (8hr)',
     perMin: 'Per Minute',
     perSec: 'Per Second',
-    todayEarned: 'Worked today',
+    todayLabel: 'Worked today',
     hours: 'hrs',
     earned: 'Earned',
     progress: 'Work progress',
     notWork: 'Not working yet',
-    workTime: 'Today',
-    startLabel: 'Start',
-    endLabel: 'End',
-    apply: 'Apply',
+    timeLabel: 'Today',
     ads: '【Google AdSense Ad】',
-    footer: 'For fun · Real-time data'
+    footer: 'For fun &middot; Real-time data',
+    startWork: 'Start', endWork: 'End', apply: 'Apply'
   }
 };
 let currentLang = 'en';
 function switchLang() {
   currentLang = currentLang === 'en' ? 'zh' : 'en';
   const d = langData[currentLang];
+  const els = ['title','subtitle','langBtn','monthlyHint','cardDaily','cardHourly','cardMin','cardSec','todayLabel','hoursLabel','timeLabel','adsText','footerText','startLabel','endLabel'];
   document.getElementById('title').textContent = d.title;
   document.getElementById('subtitle').textContent = d.subtitle;
-  document.getElementById('langBtn').textContent = currentLang === 'en' ? '🌐 中' : '🌐 EN';
+  document.getElementById('langBtn').textContent = currentLang === 'en' ? '&#127760; 中' : '&#127760; EN';
+  document.getElementById('monthlyHint').textContent = d.hint;
+  document.querySelector('.salary-input input').placeholder = d.monthlyLabel;
+  document.querySelector('.salary-input button').textContent = d.startBtn;
+  document.querySelectorAll('.card')[0].querySelector('.card-label').textContent = d.daily;
+  document.querySelectorAll('.card')[1].querySelector('.card-label').textContent = d.hourly;
+  document.querySelectorAll('.card')[2].querySelector('.card-label').textContent = d.perMin;
+  document.querySelectorAll('.card')[3].querySelector('.card-label').textContent = d.perSec;
+  document.getElementById('todayLabel').textContent = d.todayLabel;
+  document.getElementById('hoursLabel').textContent = d.hours;
+  document.getElementById('timeLabel').textContent = d.timeLabel;
+  document.getElementById('adsText').textContent = d.ads;
+  document.getElementById('footerText').innerHTML = d.footer;
+  document.getElementById('startLabel').textContent = d.startWork;
+  document.getElementById('endLabel').textContent = d.endWork;
 }
 </script>
 </body>
