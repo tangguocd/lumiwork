@@ -44,14 +44,31 @@
         .progress-bar {
             transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
+
+        /* 移动端优化 */
+        @media (max-width: 640px) {
+            .input-grid {
+                grid-template-columns: 1fr !important;
+                gap: 1rem !important;
+            }
+            
+            .main-container {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+            
+            #today-earnings {
+                font-size: 3.5rem;
+            }
+        }
     </style>
 </head>
 <body class="bg-[#1a1a2e] text-white min-h-screen pb-12">
-    <div class="max-w-5xl mx-auto px-4 py-8">
+    <div class="max-w-5xl mx-auto main-container px-4 py-8">
         <!-- Header -->
         <div class="flex justify-between items-center mb-8">
             <div>
-                <h1 id="title" class="text-4xl font-bold tracking-tight gold-text">工资实时计算器</h1>
+                <h1 id="title" class="text-3xl md:text-4xl font-bold tracking-tight gold-text">工资实时计算器</h1>
                 <p id="subtitle" class="text-gray-400 text-sm mt-1">实时查看今日收入 · 每秒更新</p>
             </div>
             
@@ -65,7 +82,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             
             <!-- Input Panel -->
-            <div class="lg:col-span-4 bg-[#16213e] rounded-3xl p-6 border border-[#F9A825]/20">
+            <div class="lg:col-span-4 bg-[#16213e] rounded-3xl p-6 md:p-8 border border-[#F9A825]/20">
                 <div class="space-y-6">
                     <!-- Monthly Salary -->
                     <div>
@@ -80,8 +97,8 @@
                         </div>
                     </div>
                     
-                    <!-- Work Time -->
-                    <div class="grid grid-cols-2 gap-4">
+                    <!-- Work Time - 移动端垂直排列 -->
+                    <div class="input-grid grid grid-cols-2 md:grid-cols-2 gap-4">
                         <div>
                             <label id="start-label" class="block text-sm text-gray-400 mb-2">上班时间</label>
                             <input id="start-time" 
@@ -101,14 +118,14 @@
                     </div>
                     
                     <!-- Today Info -->
-                    <div class="bg-[#1a1a2e] rounded-2xl p-4 text-sm">
-                        <div class="flex justify-between text-gray-400 mb-1">
+                    <div class="bg-[#1a1a2e] rounded-2xl p-5 text-sm">
+                        <div class="flex justify-between text-gray-400 mb-2">
                             <span id="today-date-label">今天</span>
                             <span id="current-date" class="font-mono"></span>
                         </div>
-                        <div class="flex justify-between">
+                        <div class="flex justify-between items-center">
                             <span id="work-hours-label" class="text-gray-400">今日工作时长</span>
-                            <span id="worked-hours" class="font-semibold gold-text">0.0 小时</span>
+                            <span id="worked-hours" class="font-semibold gold-text text-lg">0.0 小时</span>
                         </div>
                     </div>
                 </div>
@@ -118,10 +135,10 @@
             <div class="lg:col-span-8 space-y-6">
                 
                 <!-- Today's Earnings -->
-                <div class="bg-gradient-to-br from-[#16213e] to-[#1a1a2e] border border-[#F9A825]/40 rounded-3xl p-8 text-center">
+                <div class="bg-gradient-to-br from-[#16213e] to-[#1a1a2e] border border-[#F9A825]/40 rounded-3xl p-6 md:p-8 text-center">
                     <div id="today-label" class="uppercase tracking-widest text-sm text-gray-400 mb-2">今日已赚</div>
                     <div id="today-earnings" 
-                         class="number text-7xl md:text-8xl font-bold gold-text glow tabular-nums">0.00</div>
+                         class="number text-6xl md:text-7xl lg:text-8xl font-bold gold-text glow tabular-nums">0.00</div>
                     <div id="today-unit" class="text-[#F57F17] text-xl mt-1">¥</div>
                     
                     <!-- Progress -->
@@ -139,7 +156,7 @@
                 
                 <!-- Stats Grid -->
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="stats-grid">
-                    <!-- Populated by JS -->
+                    <!-- JS 生成 -->
                 </div>
             </div>
         </div>
@@ -206,12 +223,6 @@
         let monthlySalary = 12000;
         let startTimeStr = "09:00";
         let endTimeStr = "18:00";
-        let lastUpdateTime = Date.now();
-        
-        // Tailwind script already loaded
-        function initTailwind() {
-            // Already included via CDN
-        }
         
         function formatCurrency(num) {
             return num.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -220,23 +231,19 @@
         function calculateWorkHours(startStr, endStr) {
             const [startH, startM] = startStr.split(':').map(Number);
             const [endH, endM] = endStr.split(':').map(Number);
-            
             let hours = endH - startH;
             let minutes = endM - startM;
-            
             if (minutes < 0) {
                 hours--;
                 minutes += 60;
             }
-            
             return hours + (minutes / 60);
         }
         
         function parseTime(timeStr) {
             const [hours, minutes] = timeStr.split(':').map(Number);
             const now = new Date();
-            const date = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
-            return date;
+            return new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
         }
         
         function getTodayEarnings() {
@@ -245,7 +252,6 @@
             const endToday = parseTime(endTimeStr);
             
             let workedMs = 0;
-            
             if (now >= startToday && now <= endToday) {
                 workedMs = now - startToday;
             } else if (now > endToday) {
@@ -254,7 +260,6 @@
             
             const totalWorkHours = calculateWorkHours(startTimeStr, endTimeStr);
             const dailyPay = monthlySalary / 30;
-            
             const workedHours = workedMs / (1000 * 60 * 60);
             return Math.min(Math.max(0, (workedHours / totalWorkHours) * dailyPay), dailyPay);
         }
@@ -269,7 +274,6 @@
             
             const totalMs = endToday - startToday;
             const elapsedMs = now - startToday;
-            
             return Math.min(100, (elapsedMs / totalMs) * 100);
         }
         
@@ -280,7 +284,6 @@
             const minPay = hourlyPay / 60;
             const secPay = minPay / 60;
             
-            // Update cards
             document.getElementById('daily-value').textContent = formatCurrency(dailyPay);
             document.getElementById('hourly-value').textContent = formatCurrency(hourlyPay);
             document.getElementById('min-value').textContent = formatCurrency(minPay);
@@ -289,11 +292,7 @@
         
         function updateTodayEarnings() {
             const earnings = getTodayEarnings();
-            const todayEl = document.getElementById('today-earnings');
-            
-            // Simple smooth update
-            todayEl.style.transition = 'all 0.4s ease-out';
-            todayEl.textContent = formatCurrency(earnings);
+            document.getElementById('today-earnings').textContent = formatCurrency(earnings);
         }
         
         function updateProgress() {
@@ -308,20 +307,19 @@
             const endToday = parseTime(endTimeStr);
             
             let workedHours = 0;
-            
             if (now >= startToday && now <= endToday) {
                 workedHours = (now - startToday) / (1000 * 60 * 60);
             } else if (now > endToday) {
                 workedHours = calculateWorkHours(startTimeStr, endTimeStr);
             }
-            
             document.getElementById('worked-hours').textContent = `${workedHours.toFixed(1)} 小时`;
         }
         
         function updateDate() {
             const now = new Date();
             const options = { month: 'long', day: 'numeric', weekday: 'long' };
-            document.getElementById('current-date').textContent = now.toLocaleDateString(currentLang === 'zh' ? 'zh-CN' : 'en-US', options);
+            document.getElementById('current-date').textContent = 
+                now.toLocaleDateString(currentLang === 'zh' ? 'zh-CN' : 'en-US', options);
         }
         
         function updateAll() {
@@ -338,7 +336,6 @@
         function createStatCards() {
             const container = document.getElementById('stats-grid');
             container.innerHTML = `
-                <!-- Daily -->
                 <div class="card bg-[#16213e] rounded-3xl p-6 border border-[#F9A825]/20">
                     <div class="flex items-center justify-between mb-4">
                         <div class="text-3xl">📅</div>
@@ -348,7 +345,6 @@
                     <div id="daily-label" class="text-gray-400 text-sm mt-1"></div>
                 </div>
                 
-                <!-- Hourly -->
                 <div class="card bg-[#16213e] rounded-3xl p-6 border border-[#F9A825]/20">
                     <div class="flex items-center justify-between mb-4">
                         <div class="text-3xl">⏰</div>
@@ -358,7 +354,6 @@
                     <div id="hourly-label" class="text-gray-400 text-sm mt-1"></div>
                 </div>
                 
-                <!-- Per Minute -->
                 <div class="card bg-[#16213e] rounded-3xl p-6 border border-[#F9A825]/20">
                     <div class="flex items-center justify-between mb-4">
                         <div class="text-3xl">⌛</div>
@@ -368,7 +363,6 @@
                     <div id="min-label" class="text-gray-400 text-sm mt-1"></div>
                 </div>
                 
-                <!-- Per Second -->
                 <div class="card bg-[#16213e] rounded-3xl p-6 border border-[#F9A825]/20">
                     <div class="flex items-center justify-between mb-4">
                         <div class="text-3xl">⚡</div>
@@ -393,7 +387,6 @@
             document.getElementById('today-date-label').textContent = t.todayDate;
             document.getElementById('work-hours-label').textContent = t.workHours;
             
-            // Units and labels
             document.getElementById('daily-label').textContent = t.daily;
             document.getElementById('hourly-label').textContent = t.hourly;
             document.getElementById('min-label').textContent = t.perMin;
@@ -413,7 +406,6 @@
             updateAll();
         }
         
-        // Main loop
         function startLiveUpdate() {
             setInterval(() => {
                 updateTodayEarnings();
@@ -423,21 +415,14 @@
             }, 1000);
         }
         
-        // Initialize everything
         function initialize() {
             createStatCards();
             updateLanguage();
             updateAll();
             updateDate();
             startLiveUpdate();
-            
-            // Keyboard support
-            document.getElementById('monthly-input').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') this.blur();
-            });
         }
         
-        // Boot the app
         window.onload = initialize;
     </script>
 </body>
