@@ -1,362 +1,574 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>工资实时计算器 | Salary Live Counter</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>Salary Live Counter</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Noto+Sans+SC:wght@400;500;600&amp;display=swap');
         
-        body {
-            font-family: 'Inter', 'Noto Sans SC', system-ui, sans-serif;
+        :root {
+            --bg: #1a1a2e;
+            --card: #16213e;
+            --gold: #F9A825;
+            --gold-dark: #F57F17;
         }
         
-        .gold-text { color: #F9A825; }
-        .glow { 
-            text-shadow: 0 0 15px #F9A825, 0 0 30px #F57F17; 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f0f1e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #F9A825, #F57F17);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .lang-toggle {
+            background: rgba(249, 168, 37, 0.15);
+            color: #F9A825;
+            border: 2px solid #F9A825;
+            padding: 10px 18px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .lang-toggle:hover {
+            background: #F9A825;
+            color: #1a1a2e;
+            transform: scale(1.05);
+        }
+        
+        .main {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 30px;
+        }
+        
+        @media (max-width: 992px) {
+            .main {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .input-panel {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
         }
         
         .card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--card);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
         }
+        
         .card:hover {
             transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(249, 168, 37, 0.15);
         }
         
-        .input-box {
-            width: 100%;
-            background-color: #0f172a;
-            border: 1px solid rgba(249, 168, 37, 0.3);
-            border-radius: 16px;
-            padding: 16px 20px;
+        .card-label {
+            font-size: 0.95rem;
+            color: #aaa;
+            margin-bottom: 8px;
+        }
+        
+        .card-value {
+            font-size: 1.85rem;
+            font-weight: 700;
+            color: var(--gold);
+            transition: all 0.4s ease;
+        }
+        
+        .today-earnings {
+            background: linear-gradient(145deg, #16213e, #1e2a4d);
+            border: 3px solid #F9A825;
+            border-radius: 24px;
+            padding: 35px 25px;
+            text-align: center;
+            margin-bottom: 25px;
+            box-shadow: 0 0 40px rgba(249, 168, 37, 0.3);
+        }
+        
+        .today-label {
             font-size: 1.1rem;
+            color: #ddd;
+            margin-bottom: 10px;
+        }
+        
+        .today-amount {
+            font-size: 3.2rem;
+            font-weight: 800;
+            color: #F9A825;
+            text-shadow: 0 0 25px #F9A825,
+                         0 0 40px #F57F17;
+            margin: 10px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .progress-container {
+            margin-top: 20px;
+        }
+        
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+        }
+        
+        .progress-bar {
+            height: 12px;
+            background: #334155;
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #F9A825, #F57F17);
+            width: 0%;
+            transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border-radius: 9999px;
+        }
+        
+        .inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        label {
+            font-weight: 500;
+            color: #ccc;
+        }
+        
+        input {
+            padding: 14px 16px;
+            background: #0f1629;
+            border: 2px solid #334155;
+            border-radius: 12px;
+            color: white;
+            font-size: 1.1rem;
+            transition: border 0.3s;
+        }
+        
+        input:focus {
+            border-color: #F9A825;
             outline: none;
         }
-        .input-box:focus {
-            border-color: #F9A825;
+        
+        .time-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
         }
         
-        @media (max-width: 640px) {
-            #today-earnings { font-size: 3.2rem; }
-            .stats-grid { gap: 16px; }
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .adsense {
+            margin: 30px auto;
+            max-width: 728px;
+            height: 90px;
+            background: rgba(255,255,255,0.05);
+            border: 2px dashed #555;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #777;
+            font-size: 0.9rem;
+        }
+        
+        .unit {
+            font-size: 0.95rem;
+            color: #aaa;
         }
     </style>
 </head>
-<body class="bg-[#1a1a2e] text-white min-h-screen pb-12">
-    <div class="max-w-5xl mx-auto px-4 py-8">
-        
-        <!-- Header -->
-        <div class="flex justify-between items-center mb-8">
-            <div>
-                <h1 id="title" class="text-3xl md:text-4xl font-bold gold-text">工资实时计算器</h1>
-                <p id="subtitle" class="text-gray-400 mt-1">实时查看今日收入 · 每秒更新</p>
-            </div>
-            <button onclick="toggleLanguage()" 
-                    class="flex items-center gap-2 bg-[#16213e] hover:bg-[#1e2a52] px-6 py-3 rounded-2xl border border-[#F9A825]/30 transition-colors">
-                <i class="fa-solid fa-globe text-xl"></i>
-                <span id="lang-text" class="font-semibold">EN</span>
+<body>
+    <div class="container">
+        <header>
+            <div class="title" id="page-title">Salary Live Counter</div>
+            <button class="lang-toggle" id="lang-btn">
+                🌐 <span id="lang-text">中文</span>
             </button>
-        </div>
+        </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            
-            <!-- 输入区域 -->
-            <div class="lg:col-span-4 bg-[#16213e] rounded-3xl p-6 md:p-8 border border-[#F9A825]/20">
-                <div class="space-y-6">
+        <div class="main">
+            <!-- Input Panel -->
+            <div class="input-panel">
+                <div class="inputs">
+                    <div class="input-group">
+                        <label id="monthly-label">Monthly Salary</label>
+                        <div style="position: relative;">
+                            <span style="position: absolute; left: 16px; top: 14px; color: #F9A825; font-weight: bold;" id="currency-symbol">$</span>
+                            <input type="number" id="monthly-salary" value="12000" style="padding-left: 50px; width: 100%;">
+                        </div>
+                    </div>
                     
-                    <!-- 月薪 -->
-                    <div>
-                        <label id="monthly-label" class="block text-sm text-gray-400 mb-2">月薪</label>
-                        <div class="relative">
-                            <input id="monthly-input" type="number" value="12000" 
-                                   oninput="updateAll()" 
-                                   class="input-box text-3xl font-semibold">
-                            <span id="salary-currency" class="absolute right-6 top-1/2 -translate-y-1/2 text-gray-400 font-medium">¥</span>
+                    <div class="time-inputs">
+                        <div class="input-group">
+                            <label id="start-label">Start Time</label>
+                            <input type="time" id="start-time" value="09:00">
+                        </div>
+                        <div class="input-group">
+                            <label id="end-label">End Time</label>
+                            <input type="time" id="end-time" value="18:00">
                         </div>
                     </div>
+                </div>
 
-                    <!-- 上班 & 下班时间（与月薪同宽） -->
-                    <div class="space-y-5">
-                        <div>
-                            <label id="start-label" class="block text-sm text-gray-400 mb-2">上班时间</label>
-                            <input id="start-time" type="time" value="09:00" 
-                                   oninput="updateAll()" 
-                                   class="input-box text-xl">
-                        </div>
-                        <div>
-                            <label id="end-label" class="block text-sm text-gray-400 mb-2">下班时间</label>
-                            <input id="end-time" type="time" value="18:00" 
-                                   oninput="updateAll()" 
-                                   class="input-box text-xl">
-                        </div>
-                    </div>
-
-                    <!-- 今日信息 -->
-                    <div class="bg-[#1a1a2e] rounded-2xl p-5">
-                        <div class="flex justify-between text-gray-400 mb-3">
-                            <span id="today-date-label">今天</span>
-                            <span id="current-date" class="font-mono"></span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <span id="work-hours-label" class="text-gray-400">今日工作时长</span>
-                            <span id="worked-hours" class="gold-text font-semibold">0.0 小时</span>
+                <div style="margin-top: 35px;">
+                    <div class="today-earnings">
+                        <div class="today-label" id="today-label">Today's Earnings</div>
+                        <div class="today-amount" id="today-amount">$0.00</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span id="progress-text">Work Progress</span>
+                                <span id="progress-percent">0%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progress-fill"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- 右侧主要显示区域 -->
-            <div class="lg:col-span-8 space-y-6">
-                
-                <!-- 今日已赚 -->
-                <div class="bg-gradient-to-br from-[#16213e] to-[#1a1a2e] border border-[#F9A825]/40 rounded-3xl p-8 text-center">
-                    <p id="today-label" class="uppercase tracking-widest text-sm text-gray-400 mb-2">今日已赚</p>
-                    <div id="today-earnings" class="number text-6xl md:text-7xl lg:text-8xl font-bold gold-text glow">0.00</div>
-                    <div id="today-unit" class="text-[#F57F17] text-2xl mt-2">¥</div>
-
-                    <!-- 进度条 -->
-                    <div class="mt-10">
-                        <div class="flex justify-between text-xs text-gray-400 mb-2">
-                            <span id="progress-label">工作进度</span>
-                            <span id="progress-text">0%</span>
-                        </div>
-                        <div class="h-3 bg-[#0f172a] rounded-full overflow-hidden">
-                            <div id="progress-bar" class="h-full w-0 bg-gradient-to-r from-[#F9A825] to-[#F57F17] rounded-full transition-all duration-1000"></div>
-                        </div>
+            <!-- Stats -->
+            <div>
+                <div class="stats-grid">
+                    <!-- Daily -->
+                    <div class="card">
+                        <div class="card-label" id="daily-label">Daily</div>
+                        <div class="card-value" id="daily-value">$400.00</div>
+                        <div class="unit" id="daily-unit">¥/day</div>
+                    </div>
+                    
+                    <!-- Hourly -->
+                    <div class="card">
+                        <div class="card-label" id="hourly-label">Hourly</div>
+                        <div class="card-value" id="hourly-value">$50.00</div>
+                        <div class="unit" id="hourly-unit">¥/hr</div>
+                    </div>
+                    
+                    <!-- Per Minute -->
+                    <div class="card">
+                        <div class="card-label" id="minute-label">Per Minute</div>
+                        <div class="card-value" id="minute-value">$0.83</div>
+                        <div class="unit" id="minute-unit">¥/min</div>
+                    </div>
+                    
+                    <!-- Per Second -->
+                    <div class="card">
+                        <div class="card-label" id="second-label">Per Second</div>
+                        <div class="card-value" id="second-value">$0.014</div>
+                        <div class="unit" id="second-unit">¥/sec</div>
                     </div>
                 </div>
 
-                <!-- 4个统计卡片 -->
-                <div id="stats-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4 stats-grid">
-                    <!-- JavaScript 生成 -->
+                <div style="margin-top: 25px; background: var(--card); border-radius: 16px; padding: 20px; font-size: 0.95rem; color: #bbb;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;" id="work-hours-row">
+                        <span id="work-hours-label">Working hours per day:</span>
+                        <span id="work-hours-value">9.0 hours</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;" id="days-month-row">
+                        <span id="days-month-label">Assuming 30 days/month</span>
+                        <span>30</span>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Footer -->
-        <div class="mt-16 text-center">
-            <div class="bg-[#16213e]/70 border border-dashed border-[#F9A825]/30 rounded-3xl py-8">
-                <div class="text-gray-500 text-xs tracking-widest">—— 广告位 ——</div>
-                <div class="text-gray-400 text-sm mt-1">Google AdSense</div>
-            </div>
-            <div class="text-xs text-gray-500 mt-8">
-                纯静态HTML • 数据仅供参考 • 按30天/月计算
-            </div>
+        <!-- Ad placeholder -->
+        <div class="adsense">
+            Google AdSense Placeholder
         </div>
+
+        <footer>
+            <p>Real-time salary calculator • Updates every second</p>
+        </footer>
     </div>
 
     <script>
+        // Language data
         const translations = {
-            zh: {
-                title: "工资实时计算器",
-                subtitle: "实时查看今日收入 · 每秒更新",
-                monthlyLabel: "月薪",
-                startLabel: "上班时间",
-                endLabel: "下班时间",
-                todayLabel: "今日已赚",
-                progressLabel: "工作进度",
-                daily: "日薪", hourly: "时薪", perMin: "每分钟", perSec: "每秒",
-                unitDay: "元/天", unitHour: "元/小时", unitMin: "元/分钟", unitSec: "元/秒",
-                todayDate: "今天", workHours: "今日工作时长",
-                currency: "¥"
-            },
             en: {
-                title: "Salary Live Counter",
-                subtitle: "Real-time earnings • Updates every second",
+                pageTitle: "Salary Live Counter",
+                langText: "中文",
                 monthlyLabel: "Monthly Salary",
                 startLabel: "Start Time",
                 endLabel: "End Time",
                 todayLabel: "Today's Earnings",
-                progressLabel: "Work Progress",
-                daily: "Daily", hourly: "Hourly", perMin: "Per Minute", perSec: "Per Second",
-                unitDay: "$/day", unitHour: "$/hr", unitMin: "$/min", unitSec: "$/sec",
-                todayDate: "Today", workHours: "Today's Work Hours",
-                currency: "$"
+                progressText: "Work Progress",
+                dailyLabel: "Daily",
+                hourlyLabel: "Hourly",
+                minuteLabel: "Per Minute",
+                secondLabel: "Per Second",
+                dailyUnit: "$/day",
+                hourlyUnit: "$/hr",
+                minuteUnit: "$/min",
+                secondUnit: "$/sec",
+                workHoursLabel: "Working hours per day:",
+                daysMonthLabel: "Assuming 30 days/month"
+            },
+            zh: {
+                pageTitle: "工资实时计算器",
+                langText: "English",
+                monthlyLabel: "月薪",
+                startLabel: "上班时间",
+                endLabel: "下班时间",
+                todayLabel: "今日已赚",
+                progressText: "今日工作进度",
+                dailyLabel: "日薪",
+                hourlyLabel: "时薪",
+                minuteLabel: "每分钟",
+                secondLabel: "每秒",
+                dailyUnit: "元/天",
+                hourlyUnit: "元/小时",
+                minuteUnit: "元/分钟",
+                secondUnit: "元/秒",
+                workHoursLabel: "每日工作时长：",
+                daysMonthLabel: "按每月30天计算"
             }
         };
 
-        let currentLang = 'zh';
+        let currentLang = 'en';
         let monthlySalary = 12000;
-        let startTimeStr = "09:00";
-        let endTimeStr = "18:00";
+        let startHour = 9;
+        let startMinute = 0;
+        let endHour = 18;
+        let endMinute = 0;
+        let currency = '$';
 
-        function format(num) {
-            return num.toLocaleString('zh-CN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-        }
+        // DOM elements
+        const monthlyInput = document.getElementById('monthly-salary');
+        const startTimeInput = document.getElementById('start-time');
+        const endTimeInput = document.getElementById('end-time');
+        const langBtn = document.getElementById('lang-btn');
+        const langText = document.getElementById('lang-text');
 
-        function calcWorkHours() {
-            const [sh, sm] = startTimeStr.split(':').map(Number);
-            const [eh, em] = endTimeStr.split(':').map(Number);
-            let h = eh - sh;
-            let m = em - sm;
-            if (m < 0) { h--; m += 60; }
-            return h + m / 60;
-        }
-
-        function parseTime(str) {
-            const [h, m] = str.split(':').map(Number);
-            const d = new Date();
-            return new Date(d.getFullYear(), d.getMonth(), d.getDate(), h, m);
-        }
-
-        function getTodayEarnings() {
-            const now = new Date();
-            const start = parseTime(startTimeStr);
-            const end = parseTime(endTimeStr);
-            let worked = 0;
-            if (now >= start && now <= end) worked = now - start;
-            else if (now > end) worked = end - start;
+        // Update language
+        function updateLanguage(lang) {
+            currentLang = lang;
+            const t = translations[lang];
             
-            const totalHours = calcWorkHours();
-            const daily = monthlySalary / 30;
-            return Math.min((worked / (totalHours * 3600000)) * daily, daily);
-        }
-
-        function getProgress() {
-            const now = new Date();
-            const start = parseTime(startTimeStr);
-            const end = parseTime(endTimeStr);
-            if (now < start) return 0;
-            if (now > end) return 100;
-            return ((now - start) / (end - start)) * 100;
-        }
-
-        function updateStats() {
-            const daily = monthlySalary / 30;
-            const hours = calcWorkHours();
-            const hourly = daily / hours;
-            const min = hourly / 60;
-            const sec = min / 60;
-
-            document.getElementById('daily-value').textContent = format(daily);
-            document.getElementById('hourly-value').textContent = format(hourly);
-            document.getElementById('min-value').textContent = format(min);
-            document.getElementById('sec-value').textContent = sec.toFixed(4);
-        }
-
-        function updateToday() {
-            document.getElementById('today-earnings').textContent = format(getTodayEarnings());
-            document.getElementById('progress-bar').style.width = getProgress() + '%';
-            document.getElementById('progress-text').textContent = Math.round(getProgress()) + '%';
-        }
-
-        function updateWorkedHours() {
-            const now = new Date();
-            const start = parseTime(startTimeStr);
-            const end = parseTime(endTimeStr);
-            let hours = 0;
-            if (now >= start && now <= end) hours = (now - start) / 3600000;
-            else if (now > end) hours = calcWorkHours();
-            document.getElementById('worked-hours').textContent = hours.toFixed(1) + ' 小时';
-        }
-
-        function updateDate() {
-            const now = new Date();
-            const opt = { weekday: 'long', month: 'long', day: 'numeric' };
-            document.getElementById('current-date').textContent = now.toLocaleDateString(currentLang === 'zh' ? 'zh-CN' : 'en-US', opt);
-        }
-
-        function updateCurrency() {
-            const cur = translations[currentLang].currency;
-            document.getElementById('salary-currency').textContent = cur;
-            document.getElementById('today-unit').textContent = cur;
-        }
-
-        function updateAll() {
-            monthlySalary = parseFloat(document.getElementById('monthly-input').value) || 12000;
-            startTimeStr = document.getElementById('start-time').value || "09:00";
-            endTimeStr = document.getElementById('end-time').value || "18:00";
-            updateStats();
-            updateToday();
-            updateWorkedHours();
-        }
-
-        function createCards() {
-            document.getElementById('stats-grid').innerHTML = `
-                <div class="card bg-[#16213e] rounded-3xl p-6 border border-[#F9A825]/20">
-                    <div class="flex justify-between mb-4">
-                        <span class="text-3xl">📅</span>
-                        <span id="daily-unit" class="text-xs px-4 py-1 bg-[#0f172a] rounded-full text-[#F9A825]"></span>
-                    </div>
-                    <div id="daily-value" class="text-4xl font-bold gold-text">400.00</div>
-                    <div id="daily-label" class="text-gray-400 text-sm"></div>
-                </div>
-                <div class="card bg-[#16213e] rounded-3xl p-6 border border-[#F9A825]/20">
-                    <div class="flex justify-between mb-4">
-                        <span class="text-3xl">⏰</span>
-                        <span id="hourly-unit" class="text-xs px-4 py-1 bg-[#0f172a] rounded-full text-[#F9A825]"></span>
-                    </div>
-                    <div id="hourly-value" class="text-4xl font-bold gold-text">50.00</div>
-                    <div id="hourly-label" class="text-gray-400 text-sm"></div>
-                </div>
-                <div class="card bg-[#16213e] rounded-3xl p-6 border border-[#F9A825]/20">
-                    <div class="flex justify-between mb-4">
-                        <span class="text-3xl">⌛</span>
-                        <span id="min-unit" class="text-xs px-4 py-1 bg-[#0f172a] rounded-full text-[#F9A825]"></span>
-                    </div>
-                    <div id="min-value" class="text-4xl font-bold gold-text">0.83</div>
-                    <div id="min-label" class="text-gray-400 text-sm"></div>
-                </div>
-                <div class="card bg-[#16213e] rounded-3xl p-6 border border-[#F9A825]/20">
-                    <div class="flex justify-between mb-4">
-                        <span class="text-3xl">⚡</span>
-                        <span id="sec-unit" class="text-xs px-4 py-1 bg-[#0f172a] rounded-full text-[#F9A825]"></span>
-                    </div>
-                    <div id="sec-value" class="text-4xl font-bold gold-text">0.0139</div>
-                    <div id="sec-label" class="text-gray-400 text-sm"></div>
-                </div>
-            `;
-        }
-
-        function updateLanguage() {
-            const t = translations[currentLang];
-            document.getElementById('title').textContent = t.title;
-            document.getElementById('subtitle').textContent = t.subtitle;
+            document.getElementById('page-title').textContent = t.pageTitle;
+            langText.textContent = t.langText;
+            
             document.getElementById('monthly-label').textContent = t.monthlyLabel;
             document.getElementById('start-label').textContent = t.startLabel;
             document.getElementById('end-label').textContent = t.endLabel;
             document.getElementById('today-label').textContent = t.todayLabel;
-            document.getElementById('progress-label').textContent = t.progressLabel;
-            document.getElementById('today-date-label').textContent = t.todayDate;
-            document.getElementById('work-hours-label').textContent = t.workHours;
-
-            document.getElementById('daily-label').textContent = t.daily;
-            document.getElementById('hourly-label').textContent = t.hourly;
-            document.getElementById('min-label').textContent = t.perMin;
-            document.getElementById('sec-label').textContent = t.perSec;
-
-            document.getElementById('daily-unit').textContent = t.unitDay;
-            document.getElementById('hourly-unit').textContent = t.unitHour;
-            document.getElementById('min-unit').textContent = t.unitMin;
-            document.getElementById('sec-unit').textContent = t.unitSec;
-
-            document.getElementById('lang-text').textContent = currentLang === 'zh' ? 'EN' : '中';
-            updateCurrency();
+            document.getElementById('progress-text').textContent = t.progressText;
+            
+            document.getElementById('daily-label').textContent = t.dailyLabel;
+            document.getElementById('hourly-label').textContent = t.hourlyLabel;
+            document.getElementById('minute-label').textContent = t.minuteLabel;
+            document.getElementById('second-label').textContent = t.secondLabel;
+            
+            // Units will be updated in render function
+            document.getElementById('work-hours-label').textContent = t.workHoursLabel;
+            document.getElementById('days-month-label').textContent = t.daysMonthLabel;
         }
 
-        function toggleLanguage() {
-            currentLang = currentLang === 'zh' ? 'en' : 'zh';
-            updateLanguage();
-            updateAll();
+        // Parse time
+        function parseTime(timeStr) {
+            const [h, m] = timeStr.split(':').map(Number);
+            return { hour: h, minute: m };
         }
 
-        function startTimer() {
+        // Calculate rates
+        function calculateRates() {
+            monthlySalary = parseFloat(monthlyInput.value) || 12000;
+            
+            const start = parseTime(startTimeInput.value);
+            const end = parseTime(endTimeInput.value);
+            
+            startHour = start.hour;
+            startMinute = start.minute;
+            endHour = end.hour;
+            endMinute = end.minute;
+            
+            const workMinutes = (endHour * 60 + endMinute) - (startHour * 60 + startMinute);
+            const workHours = Math.max(workMinutes / 60, 0.5);
+            
+            // Daily salary (30 days)
+            const daily = monthlySalary / 30;
+            const hourly = daily / workHours;
+            const perMinute = hourly / 60;
+            const perSecond = perMinute / 60;
+            
+            return {
+                daily: daily,
+                hourly: hourly,
+                perMinute: perMinute,
+                perSecond: perSecond,
+                workHours: workHours
+            };
+        }
+
+        // Format number with commas and 2 decimals
+        function formatMoney(num) {
+            return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        // Get today's earnings
+        function getTodayEarnings(rates) {
+            const now = new Date();
+            const currentHour = now.getHours();
+            const currentMinute = now.getMinutes();
+            const currentTotalMinutes = currentHour * 60 + currentMinute;
+            
+            const startTotalMinutes = startHour * 60 + startMinute;
+            const endTotalMinutes = endHour * 60 + endMinute;
+            
+            let elapsedMinutes = 0;
+            
+            if (currentTotalMinutes > startTotalMinutes && currentTotalMinutes < endTotalMinutes) {
+                elapsedMinutes = currentTotalMinutes - startTotalMinutes;
+            } else if (currentTotalMinutes >= endTotalMinutes) {
+                elapsedMinutes = endTotalMinutes - startTotalMinutes; // finished
+            }
+            
+            const earnings = elapsedMinutes * rates.perMinute;
+            const progress = Math.min(Math.max((elapsedMinutes / (rates.workHours * 60)) * 100, 0), 100);
+            
+            return { earnings, progress };
+        }
+
+        // Main render function
+        function updateDisplay() {
+            const rates = calculateRates();
+            const today = getTodayEarnings(rates);
+            
+            // Update cards
+            document.getElementById('daily-value').textContent = currency + formatMoney(rates.daily);
+            document.getElementById('hourly-value').textContent = currency + formatMoney(rates.hourly);
+            document.getElementById('minute-value').textContent = currency + formatMoney(rates.perMinute);
+            document.getElementById('second-value').textContent = currency + formatMoney(rates.perSecond);
+            
+            // Update today
+            document.getElementById('today-amount').textContent = currency + formatMoney(today.earnings);
+            
+            // Progress
+            document.getElementById('progress-fill').style.width = today.progress + '%';
+            document.getElementById('progress-percent').textContent = Math.round(today.progress) + '%';
+            
+            // Work hours
+            document.getElementById('work-hours-value').textContent = rates.workHours.toFixed(1) + ' hours';
+            
+            // Update units based on language
+            const isZh = currentLang === 'zh';
+            document.getElementById('daily-unit').textContent = isZh ? '元/天' : '$/day';
+            document.getElementById('hourly-unit').textContent = isZh ? '元/小时' : '$/hr';
+            document.getElementById('minute-unit').textContent = isZh ? '元/分钟' : '$/min';
+            document.getElementById('second-unit').textContent = isZh ? '元/秒' : '$/sec';
+        }
+
+        // Real-time loop
+        function startLiveCounter() {
+            updateDisplay();
             setInterval(() => {
-                updateToday();
-                updateWorkedHours();
-                updateDate();
+                updateDisplay();
             }, 1000);
         }
 
-        window.onload = () => {
-            createCards();
-            updateLanguage();
-            updateAll();
-            updateDate();
-            startTimer();
-        };
+        // Event listeners
+        function initListeners() {
+            monthlyInput.addEventListener('input', updateDisplay);
+            startTimeInput.addEventListener('change', updateDisplay);
+            endTimeInput.addEventListener('change', updateDisplay);
+            
+            langBtn.addEventListener('click', () => {
+                const newLang = currentLang === 'en' ? 'zh' : 'en';
+                currency = newLang === 'zh' ? '¥' : '$';
+                document.getElementById('currency-symbol').textContent = currency;
+                updateLanguage(newLang);
+                updateDisplay();
+            });
+            
+            // Keyboard support for number input
+            monthlyInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') updateDisplay();
+            });
+        }
+
+        // Initialize
+        function init() {
+            // Set initial currency
+            document.getElementById('currency-symbol').textContent = currency;
+            
+            updateLanguage('en');
+            initListeners();
+            startLiveCounter();
+            
+            // Initial render
+            setTimeout(updateDisplay, 300);
+        }
+
+        window.onload = init;
     </script>
 </body>
 </html>
