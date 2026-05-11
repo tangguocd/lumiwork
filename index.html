@@ -155,7 +155,7 @@
         
         label { font-weight: 500; color: #ccc; }
         
-        input {
+        input, select {
             padding: 14px 16px;
             background: #0f1629;
             border: 2px solid #334155;
@@ -164,7 +164,7 @@
             font-size: 1.1rem;
         }
         
-        input:focus {
+        input:focus, select:focus {
             border-color: #F9A825;
             outline: none;
         }
@@ -195,13 +195,10 @@
     <div class="container">
         <header>
             <div class="title" id="page-title">Salary Live Counter</div>
-            <button class="lang-toggle" id="lang-btn">
-                🌐 <span id="lang-text">中文</span>
-            </button>
+            <button class="lang-toggle" id="lang-btn">🌐 <span id="lang-text">中文</span></button>
         </header>
 
         <div class="main">
-            <!-- 输入面板 -->
             <div class="input-panel">
                 <div class="inputs">
                     <div class="input-group">
@@ -246,7 +243,6 @@
                 </div>
             </div>
 
-            <!-- 统计卡片 -->
             <div>
                 <div class="stats-grid">
                     <div class="card">
@@ -284,54 +280,33 @@
             </div>
         </div>
 
-        <div class="adsense">
-            Google AdSense Placeholder
-        </div>
-
-        <footer>
-            <p>Real-time salary calculator • Updates every second</p>
-        </footer>
+        <div class="adsense">Google AdSense Placeholder</div>
+        <footer><p>Real-time salary calculator • Updates every second</p></footer>
     </div>
 
     <script>
-        const translations = {
+        const translations = { /* 保持不变 */ 
             en: {
-                pageTitle: "Salary Live Counter",
-                langText: "中文",
-                monthlyLabel: "Monthly Salary",
-                workdaysLabel: "Working Days per Month",
-                startLabel: "Start Time",
-                endLabel: "End Time",
-                todayLabel: "Today's Earnings",
-                progressText: "Work Progress",
-                dailyLabel: "Daily",
-                hourlyLabel: "Hourly",
-                minuteLabel: "Per Minute",
-                secondLabel: "Per Second",
-                dailyUnit: "$/day",
-                hourlyUnit: "$/hr",
-                minuteUnit: "$/min",
-                secondUnit: "$/sec",
+                pageTitle: "Salary Live Counter", langText: "中文",
+                monthlyLabel: "Monthly Salary", workdaysLabel: "Working Days per Month",
+                startLabel: "Start Time", endLabel: "End Time",
+                todayLabel: "Today's Earnings", progressText: "Work Progress",
+                dailyLabel: "Daily", hourlyLabel: "Hourly",
+                minuteLabel: "Per Minute", secondLabel: "Per Second",
+                dailyUnit: "$/day", hourlyUnit: "$/hr",
+                minuteUnit: "$/min", secondUnit: "$/sec",
                 workHoursLabel: "Working hours per day:",
                 workdaysBottomLabel: "Working days per month:"
             },
             zh: {
-                pageTitle: "工资实时计算器",
-                langText: "English",
-                monthlyLabel: "月薪",
-                workdaysLabel: "每月工作天数",
-                startLabel: "上班时间",
-                endLabel: "下班时间",
-                todayLabel: "今日已赚",
-                progressText: "今日工作进度",
-                dailyLabel: "日薪",
-                hourlyLabel: "时薪",
-                minuteLabel: "每分钟",
-                secondLabel: "每秒",
-                dailyUnit: "元/天",
-                hourlyUnit: "元/小时",
-                minuteUnit: "元/分钟",
-                secondUnit: "元/秒",
+                pageTitle: "工资实时计算器", langText: "English",
+                monthlyLabel: "月薪", workdaysLabel: "每月工作天数",
+                startLabel: "上班时间", endLabel: "下班时间",
+                todayLabel: "今日已赚", progressText: "今日工作进度",
+                dailyLabel: "日薪", hourlyLabel: "时薪",
+                minuteLabel: "每分钟", secondLabel: "每秒",
+                dailyUnit: "元/天", hourlyUnit: "元/小时",
+                minuteUnit: "元/分钟", secondUnit: "元/秒",
                 workHoursLabel: "每日工作时长：",
                 workdaysBottomLabel: "每月工作天数："
             }
@@ -340,7 +315,6 @@
         let currentLang = 'en';
         let currency = '$';
 
-        // DOM
         const monthlyInput = document.getElementById('monthly-salary');
         const workdaysInput = document.getElementById('workdays');
         const startTimeInput = document.getElementById('start-time');
@@ -349,25 +323,27 @@
 
         function parseTime(timeStr) {
             const [h, m] = timeStr.split(':').map(Number);
-            return { hour: h, minute: m };
+            return { hour: h || 0, minute: m || 0 };
         }
 
         function calculateRates() {
             const monthly = parseFloat(monthlyInput.value) || 12000;
-            const workdays = parseFloat(workdaysInput.value) || 22;
+            const workdays = Math.max(1, parseFloat(workdaysInput.value) || 22);
             
             const start = parseTime(startTimeInput.value);
             const end = parseTime(endTimeInput.value);
             
-            const workMinutes = (end.hour * 60 + end.minute) - (start.hour * 60 + start.minute);
-            const workHours = Math.max(workMinutes / 60, 0.5);
+            let workMinutes = (end.hour * 60 + end.minute) - (start.hour * 60 + start.minute);
+            if (workMinutes < 30) workMinutes = 30; // 最小30分钟
+            
+            const workHours = workMinutes / 60;
             
             const daily = monthly / workdays;
             const hourly = daily / workHours;
             const perMinute = hourly / 60;
             const perSecond = perMinute / 60;
             
-            return { daily, hourly, perMinute, perSecond, workHours, workdays };
+            return { daily, hourly, perMinute, perSecond, workHours, workdays, workMinutes };
         }
 
         function formatMoney(num) {
@@ -377,20 +353,25 @@
         function getTodayEarnings(rates) {
             const now = new Date();
             const currentMinutes = now.getHours() * 60 + now.getMinutes();
-            const startMinutes = parseTime(startTimeInput.value).hour * 60 + parseTime(startTimeInput.value).minute;
-            const endMinutes = parseTime(endTimeInput.value).hour * 60 + parseTime(endTimeInput.value).minute;
+            const start = parseTime(startTimeInput.value);
+            const end = parseTime(endTimeInput.value);
             
-            let elapsed = 0;
-            if (currentMinutes > startMinutes && currentMinutes < endMinutes) {
-                elapsed = currentMinutes - startMinutes;
-            } else if (currentMinutes >= endMinutes) {
-                elapsed = endMinutes - startMinutes;
+            const startMinutes = start.hour * 60 + start.minute;
+            const endMinutes = end.hour * 60 + end.minute;
+            
+            let elapsedMinutes = 0;
+            
+            if (currentMinutes >= startMinutes && currentMinutes <= endMinutes) {
+                elapsedMinutes = currentMinutes - startMinutes;
+            } else if (currentMinutes > endMinutes) {
+                elapsedMinutes = endMinutes - startMinutes; // 已下班
             }
             
-            const earnings = elapsed * rates.perMinute;
-            const progress = Math.min((elapsed / (rates.workHours * 60)) * 100, 100);
+            const earnings = elapsedMinutes * rates.perMinute;
+            let progress = (elapsedMinutes / rates.workMinutes) * 100;
+            progress = Math.max(0, Math.min(100, progress));
             
-            return { earnings: Math.max(0, earnings), progress: Math.max(0, progress) };
+            return { earnings, progress };
         }
 
         function updateDisplay() {
@@ -409,7 +390,6 @@
             document.getElementById('work-hours-value').textContent = rates.workHours.toFixed(1) + ' hours';
             document.getElementById('workdays-bottom-value').textContent = rates.workdays + ' days';
             
-            // 更新单位
             const isZh = currentLang === 'zh';
             document.getElementById('daily-unit').textContent = isZh ? '元/天' : '$/day';
             document.getElementById('hourly-unit').textContent = isZh ? '元/小时' : '$/hr';
@@ -420,7 +400,6 @@
         function updateLanguage(lang) {
             currentLang = lang;
             const t = translations[lang];
-            
             document.getElementById('page-title').textContent = t.pageTitle;
             document.getElementById('lang-text').textContent = t.langText;
             
@@ -444,13 +423,13 @@
             document.getElementById('currency-symbol').textContent = currency;
             updateLanguage('en');
             
-            // 事件监听
-            [monthlyInput, workdaysInput, startTimeInput, endTimeInput].forEach(el => {
-                el.addEventListener('input', updateDisplay);
-                el.addEventListener('change', updateDisplay);
+            const inputs = [monthlyInput, workdaysInput, startTimeInput, endTimeInput];
+            inputs.forEach(input => {
+                input.addEventListener('input', updateDisplay);
+                input.addEventListener('change', updateDisplay);
             });
             
-            document.getElementById('lang-btn').addEventListener('click', () => {
+            langBtn.addEventListener('click', () => {
                 const newLang = currentLang === 'en' ? 'zh' : 'en';
                 currency = newLang === 'zh' ? '¥' : '$';
                 document.getElementById('currency-symbol').textContent = currency;
@@ -458,7 +437,6 @@
                 updateDisplay();
             });
             
-            // 启动实时更新
             setInterval(updateDisplay, 1000);
             updateDisplay();
         }
