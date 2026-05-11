@@ -49,16 +49,11 @@
         @media (max-width: 640px) {
             .input-grid {
                 grid-template-columns: 1fr !important;
-                gap: 1rem !important;
             }
             
             .main-container {
                 padding-left: 1rem;
                 padding-right: 1rem;
-            }
-            
-            #today-earnings {
-                font-size: 3.5rem;
             }
         }
     </style>
@@ -93,12 +88,12 @@
                                    value="12000"
                                    oninput="updateAll()"
                                    class="w-full bg-[#0f172a] border border-[#F9A825]/30 focus:border-[#F9A825] rounded-2xl px-5 py-4 text-3xl font-semibold outline-none number">
-                            <span class="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400">¥</span>
+                            <span id="salary-currency" class="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400">¥</span>
                         </div>
                     </div>
                     
-                    <!-- Work Time - 移动端垂直排列 -->
-                    <div class="input-grid grid grid-cols-2 md:grid-cols-2 gap-4">
+                    <!-- Work Time - 与月薪同宽 -->
+                    <div class="space-y-4">
                         <div>
                             <label id="start-label" class="block text-sm text-gray-400 mb-2">上班时间</label>
                             <input id="start-time" 
@@ -182,7 +177,7 @@
             zh: {
                 title: "工资实时计算器",
                 subtitle: "实时查看今日收入 · 每秒更新",
-                monthlyLabel: "月薪 (¥)",
+                monthlyLabel: "月薪",
                 startLabel: "上班时间",
                 endLabel: "下班时间",
                 todayLabel: "今日已赚",
@@ -196,12 +191,13 @@
                 unitMin: "元/分钟",
                 unitSec: "元/秒",
                 todayDate: "今天",
-                workHours: "今日工作时长"
+                workHours: "今日工作时长",
+                currency: "¥"
             },
             en: {
                 title: "Salary Live Counter",
                 subtitle: "Real-time earnings • Updates every second",
-                monthlyLabel: "Monthly Salary (¥)",
+                monthlyLabel: "Monthly Salary",
                 startLabel: "Start Time",
                 endLabel: "End Time",
                 todayLabel: "Today's Earnings",
@@ -210,17 +206,19 @@
                 hourly: "Hourly",
                 perMin: "Per Minute",
                 perSec: "Per Second",
-                unitDay: "¥/day",
-                unitHour: "¥/hr",
-                unitMin: "¥/min",
-                unitSec: "¥/sec",
+                unitDay: "$/day",
+                unitHour: "$/hr",
+                unitMin: "$/min",
+                unitSec: "$/sec",
                 todayDate: "Today",
-                workHours: "Today's Work Hours"
+                workHours: "Today's Work Hours",
+                currency: "$"
             }
         };
         
         let currentLang = 'zh';
-        let monthlySalary = 12000;
+        let monthlySalary = 12000; // 基础数值，切换语言时不改变数值，仅改变货币符号
+        
         let startTimeStr = "09:00";
         let endTimeStr = "18:00";
         
@@ -322,6 +320,12 @@
                 now.toLocaleDateString(currentLang === 'zh' ? 'zh-CN' : 'en-US', options);
         }
         
+        function updateCurrency() {
+            const currency = translations[currentLang].currency;
+            document.getElementById('salary-currency').textContent = currency;
+            document.getElementById('today-unit').textContent = currency;
+        }
+        
         function updateAll() {
             monthlySalary = parseFloat(document.getElementById('monthly-input').value) || 12000;
             startTimeStr = document.getElementById('start-time').value || "09:00";
@@ -398,6 +402,8 @@
             document.getElementById('sec-unit').textContent = t.unitSec;
             
             document.getElementById('lang-text').textContent = currentLang === 'zh' ? 'EN' : '中';
+            
+            updateCurrency();
         }
         
         function toggleLanguage() {
