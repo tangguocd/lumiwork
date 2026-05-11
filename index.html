@@ -7,180 +7,142 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Noto+Sans+SC:wght@400;500;600&amp;display=swap');
-        
-        :root {
-            --gold: #F9A825;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600&display=swap');
         
         body {
             font-family: 'Inter', 'Noto Sans SC', system-ui, sans-serif;
         }
         
-        .gold-text {
-            color: #F9A825;
+        .gold-text { color: #F9A825; }
+        .glow { 
+            text-shadow: 0 0 15px #F9A825, 0 0 30px #F57F17; 
         }
         
         .card {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        
         .card:hover {
             transform: translateY(-8px);
-            box-shadow: 0 20px 25px -5px rgb(249 168 37 / 0.1), 0 8px 10px -6px rgb(249 168 37 / 0.1);
         }
         
-        .glow {
-            text-shadow: 
-                0 0 10px rgb(249 168 37),
-                0 0 20px rgb(245 127 23),
-                0 0 40px rgb(249 168 37);
-        }
-        
-        .number {
-            font-variant-numeric: tabular-nums;
-        }
-        
-        .progress-bar {
-            transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        /* 输入框统一样式 */
-        .custom-input {
+        .input-box {
             width: 100%;
             background-color: #0f172a;
             border: 1px solid rgba(249, 168, 37, 0.3);
-            border-radius: 1rem;
-            padding: 1rem 1.25rem;
-            font-size: 1.125rem;
+            border-radius: 16px;
+            padding: 16px 20px;
+            font-size: 1.1rem;
             outline: none;
         }
-        
-        .custom-input:focus {
+        .input-box:focus {
             border-color: #F9A825;
         }
-
-        /* 移动端优化 */
+        
         @media (max-width: 640px) {
-            .main-container {
-                padding-left: 1rem;
-                padding-right: 1rem;
-            }
-            
-            #today-earnings {
-                font-size: 3.25rem;
-            }
+            #today-earnings { font-size: 3.2rem; }
+            .stats-grid { gap: 16px; }
         }
     </style>
 </head>
 <body class="bg-[#1a1a2e] text-white min-h-screen pb-12">
-    <div class="max-w-5xl mx-auto main-container px-4 py-8">
+    <div class="max-w-5xl mx-auto px-4 py-8">
+        
         <!-- Header -->
         <div class="flex justify-between items-center mb-8">
             <div>
-                <h1 id="title" class="text-3xl md:text-4xl font-bold tracking-tight gold-text">工资实时计算器</h1>
-                <p id="subtitle" class="text-gray-400 text-sm mt-1">实时查看今日收入 · 每秒更新</p>
+                <h1 id="title" class="text-3xl md:text-4xl font-bold gold-text">工资实时计算器</h1>
+                <p id="subtitle" class="text-gray-400 mt-1">实时查看今日收入 · 每秒更新</p>
             </div>
-            
             <button onclick="toggleLanguage()" 
-                    class="flex items-center gap-2 bg-[#16213e] hover:bg-[#1e2a52] transition-colors px-5 py-3 rounded-2xl text-lg shadow-inner border border-[#F9A825]/30">
-                <i class="fa-solid fa-globe"></i>
-                <span id="lang-text" class="font-medium">EN</span>
+                    class="flex items-center gap-2 bg-[#16213e] hover:bg-[#1e2a52] px-6 py-3 rounded-2xl border border-[#F9A825]/30 transition-colors">
+                <i class="fa-solid fa-globe text-xl"></i>
+                <span id="lang-text" class="font-semibold">EN</span>
             </button>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             
-            <!-- Input Panel -->
+            <!-- 输入区域 -->
             <div class="lg:col-span-4 bg-[#16213e] rounded-3xl p-6 md:p-8 border border-[#F9A825]/20">
                 <div class="space-y-6">
-                    <!-- Monthly Salary -->
+                    
+                    <!-- 月薪 -->
                     <div>
                         <label id="monthly-label" class="block text-sm text-gray-400 mb-2">月薪</label>
                         <div class="relative">
-                            <input id="monthly-input" 
-                                   type="number" 
-                                   value="12000"
-                                   oninput="updateAll()"
-                                   class="custom-input text-3xl font-semibold number">
-                            <span id="salary-currency" class="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 font-medium">¥</span>
+                            <input id="monthly-input" type="number" value="12000" 
+                                   oninput="updateAll()" 
+                                   class="input-box text-3xl font-semibold">
+                            <span id="salary-currency" class="absolute right-6 top-1/2 -translate-y-1/2 text-gray-400 font-medium">¥</span>
                         </div>
                     </div>
-                    
-                    <!-- Work Time -->
+
+                    <!-- 上班 & 下班时间（与月薪同宽） -->
                     <div class="space-y-5">
                         <div>
                             <label id="start-label" class="block text-sm text-gray-400 mb-2">上班时间</label>
-                            <input id="start-time" 
-                                   type="time" 
-                                   value="09:00"
-                                   oninput="updateAll()"
-                                   class="custom-input text-xl">
+                            <input id="start-time" type="time" value="09:00" 
+                                   oninput="updateAll()" 
+                                   class="input-box text-xl">
                         </div>
                         <div>
                             <label id="end-label" class="block text-sm text-gray-400 mb-2">下班时间</label>
-                            <input id="end-time" 
-                                   type="time" 
-                                   value="18:00"
-                                   oninput="updateAll()"
-                                   class="custom-input text-xl">
+                            <input id="end-time" type="time" value="18:00" 
+                                   oninput="updateAll()" 
+                                   class="input-box text-xl">
                         </div>
                     </div>
-                    
-                    <!-- Today Info -->
-                    <div class="bg-[#1a1a2e] rounded-2xl p-5 text-sm">
-                        <div class="flex justify-between text-gray-400 mb-2">
+
+                    <!-- 今日信息 -->
+                    <div class="bg-[#1a1a2e] rounded-2xl p-5">
+                        <div class="flex justify-between text-gray-400 mb-3">
                             <span id="today-date-label">今天</span>
                             <span id="current-date" class="font-mono"></span>
                         </div>
                         <div class="flex justify-between items-center">
                             <span id="work-hours-label" class="text-gray-400">今日工作时长</span>
-                            <span id="worked-hours" class="font-semibold gold-text text-lg">0.0 小时</span>
+                            <span id="worked-hours" class="gold-text font-semibold">0.0 小时</span>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            <!-- Main Display -->
+
+            <!-- 右侧主要显示区域 -->
             <div class="lg:col-span-8 space-y-6">
-                <!-- Today's Earnings -->
-                <div class="bg-gradient-to-br from-[#16213e] to-[#1a1a2e] border border-[#F9A825]/40 rounded-3xl p-6 md:p-8 text-center">
-                    <div id="today-label" class="uppercase tracking-widest text-sm text-gray-400 mb-2">今日已赚</div>
-                    <div id="today-earnings" 
-                         class="number text-6xl md:text-7xl lg:text-8xl font-bold gold-text glow tabular-nums">0.00</div>
-                    <div id="today-unit" class="text-[#F57F17] text-xl mt-1">¥</div>
-                    
-                    <!-- Progress -->
-                    <div class="mt-8">
+                
+                <!-- 今日已赚 -->
+                <div class="bg-gradient-to-br from-[#16213e] to-[#1a1a2e] border border-[#F9A825]/40 rounded-3xl p-8 text-center">
+                    <p id="today-label" class="uppercase tracking-widest text-sm text-gray-400 mb-2">今日已赚</p>
+                    <div id="today-earnings" class="number text-6xl md:text-7xl lg:text-8xl font-bold gold-text glow">0.00</div>
+                    <div id="today-unit" class="text-[#F57F17] text-2xl mt-2">¥</div>
+
+                    <!-- 进度条 -->
+                    <div class="mt-10">
                         <div class="flex justify-between text-xs text-gray-400 mb-2">
                             <span id="progress-label">工作进度</span>
                             <span id="progress-text">0%</span>
                         </div>
                         <div class="h-3 bg-[#0f172a] rounded-full overflow-hidden">
-                            <div id="progress-bar" 
-                                 class="progress-bar h-full bg-gradient-to-r from-[#F9A825] to-[#F57F17] w-0 rounded-full"></div>
+                            <div id="progress-bar" class="h-full w-0 bg-gradient-to-r from-[#F9A825] to-[#F57F17] rounded-full transition-all duration-1000"></div>
                         </div>
                     </div>
                 </div>
-                
-                <!-- Stats Grid -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="stats-grid">
-                    <!-- JS 生成 -->
+
+                <!-- 4个统计卡片 -->
+                <div id="stats-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4 stats-grid">
+                    <!-- JavaScript 生成 -->
                 </div>
             </div>
         </div>
-        
+
         <!-- Footer -->
         <div class="mt-16 text-center">
-            <div class="bg-[#16213e]/70 border border-dashed border-[#F9A825]/30 rounded-3xl py-8 text-center">
-                <div class="text-gray-500 text-xs tracking-widest mb-2">—— 广告位 ——</div>
-                <div class="text-gray-400 text-sm">Google AdSense</div>
+            <div class="bg-[#16213e]/70 border border-dashed border-[#F9A825]/30 rounded-3xl py-8">
+                <div class="text-gray-500 text-xs tracking-widest">—— 广告位 ——</div>
+                <div class="text-gray-400 text-sm mt-1">Google AdSense</div>
             </div>
-            
-            <div class="mt-8 text-xs text-gray-500 flex flex-col md:flex-row items-center justify-center gap-4">
-                <div>纯静态HTML • 实时每秒更新</div>
-                <div class="hidden md:block">•</div>
-                <div>数据仅供参考 • 按30天/月计算</div>
+            <div class="text-xs text-gray-500 mt-8">
+                纯静态HTML • 数据仅供参考 • 按30天/月计算
             </div>
         </div>
     </div>
@@ -195,16 +157,9 @@
                 endLabel: "下班时间",
                 todayLabel: "今日已赚",
                 progressLabel: "工作进度",
-                daily: "日薪",
-                hourly: "时薪",
-                perMin: "每分钟",
-                perSec: "每秒",
-                unitDay: "元/天",
-                unitHour: "元/小时",
-                unitMin: "元/分钟",
-                unitSec: "元/秒",
-                todayDate: "今天",
-                workHours: "今日工作时长",
+                daily: "日薪", hourly: "时薪", perMin: "每分钟", perSec: "每秒",
+                unitDay: "元/天", unitHour: "元/小时", unitMin: "元/分钟", unitSec: "元/秒",
+                todayDate: "今天", workHours: "今日工作时长",
                 currency: "¥"
             },
             en: {
@@ -215,166 +170,146 @@
                 endLabel: "End Time",
                 todayLabel: "Today's Earnings",
                 progressLabel: "Work Progress",
-                daily: "Daily",
-                hourly: "Hourly",
-                perMin: "Per Minute",
-                perSec: "Per Second",
-                unitDay: "$/day",
-                unitHour: "$/hr",
-                unitMin: "$/min",
-                unitSec: "$/sec",
-                todayDate: "Today",
-                workHours: "Today's Work Hours",
+                daily: "Daily", hourly: "Hourly", perMin: "Per Minute", perSec: "Per Second",
+                unitDay: "$/day", unitHour: "$/hr", unitMin: "$/min", unitSec: "$/sec",
+                todayDate: "Today", workHours: "Today's Work Hours",
                 currency: "$"
             }
         };
-        
+
         let currentLang = 'zh';
         let monthlySalary = 12000;
         let startTimeStr = "09:00";
         let endTimeStr = "18:00";
-        
-        function formatCurrency(num) {
-            return num.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+        function format(num) {
+            return num.toLocaleString('zh-CN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
         }
-        
-        function calculateWorkHours(startStr, endStr) {
-            const [startH, startM] = startStr.split(':').map(Number);
-            const [endH, endM] = endStr.split(':').map(Number);
-            let hours = endH - startH;
-            let minutes = endM - startM;
-            if (minutes < 0) { hours--; minutes += 60; }
-            return hours + (minutes / 60);
+
+        function calcWorkHours() {
+            const [sh, sm] = startTimeStr.split(':').map(Number);
+            const [eh, em] = endTimeStr.split(':').map(Number);
+            let h = eh - sh;
+            let m = em - sm;
+            if (m < 0) { h--; m += 60; }
+            return h + m / 60;
         }
-        
-        function parseTime(timeStr) {
-            const [hours, minutes] = timeStr.split(':').map(Number);
-            const now = new Date();
-            return new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
+
+        function parseTime(str) {
+            const [h, m] = str.split(':').map(Number);
+            const d = new Date();
+            return new Date(d.getFullYear(), d.getMonth(), d.getDate(), h, m);
         }
-        
+
         function getTodayEarnings() {
             const now = new Date();
-            const startToday = parseTime(startTimeStr);
-            const endToday = parseTime(endTimeStr);
-            let workedMs = 0;
-            if (now >= startToday && now <= endToday) workedMs = now - startToday;
-            else if (now > endToday) workedMs = endToday - startToday;
+            const start = parseTime(startTimeStr);
+            const end = parseTime(endTimeStr);
+            let worked = 0;
+            if (now >= start && now <= end) worked = now - start;
+            else if (now > end) worked = end - start;
             
-            const totalWorkHours = calculateWorkHours(startTimeStr, endTimeStr);
-            const dailyPay = monthlySalary / 30;
-            const workedHours = workedMs / (1000 * 60 * 60);
-            return Math.min(Math.max(0, (workedHours / totalWorkHours) * dailyPay), dailyPay);
+            const totalHours = calcWorkHours();
+            const daily = monthlySalary / 30;
+            return Math.min((worked / (totalHours * 3600000)) * daily, daily);
         }
-        
+
         function getProgress() {
             const now = new Date();
-            const startToday = parseTime(startTimeStr);
-            const endToday = parseTime(endTimeStr);
-            if (now < startToday) return 0;
-            if (now > endToday) return 100;
-            const totalMs = endToday - startToday;
-            const elapsedMs = now - startToday;
-            return Math.min(100, (elapsedMs / totalMs) * 100);
+            const start = parseTime(startTimeStr);
+            const end = parseTime(endTimeStr);
+            if (now < start) return 0;
+            if (now > end) return 100;
+            return ((now - start) / (end - start)) * 100;
         }
-        
+
         function updateStats() {
-            const dailyPay = monthlySalary / 30;
-            const workHoursPerDay = calculateWorkHours(startTimeStr, endTimeStr);
-            const hourlyPay = dailyPay / workHoursPerDay;
-            const minPay = hourlyPay / 60;
-            const secPay = minPay / 60;
-            
-            document.getElementById('daily-value').textContent = formatCurrency(dailyPay);
-            document.getElementById('hourly-value').textContent = formatCurrency(hourlyPay);
-            document.getElementById('min-value').textContent = formatCurrency(minPay);
-            document.getElementById('sec-value').textContent = secPay.toFixed(4);
+            const daily = monthlySalary / 30;
+            const hours = calcWorkHours();
+            const hourly = daily / hours;
+            const min = hourly / 60;
+            const sec = min / 60;
+
+            document.getElementById('daily-value').textContent = format(daily);
+            document.getElementById('hourly-value').textContent = format(hourly);
+            document.getElementById('min-value').textContent = format(min);
+            document.getElementById('sec-value').textContent = sec.toFixed(4);
         }
-        
-        function updateTodayEarnings() {
-            document.getElementById('today-earnings').textContent = formatCurrency(getTodayEarnings());
+
+        function updateToday() {
+            document.getElementById('today-earnings').textContent = format(getTodayEarnings());
+            document.getElementById('progress-bar').style.width = getProgress() + '%';
+            document.getElementById('progress-text').textContent = Math.round(getProgress()) + '%';
         }
-        
-        function updateProgress() {
-            const progress = getProgress();
-            document.getElementById('progress-bar').style.width = `${progress}%`;
-            document.getElementById('progress-text').textContent = `${Math.round(progress)}%`;
-        }
-        
+
         function updateWorkedHours() {
             const now = new Date();
-            const startToday = parseTime(startTimeStr);
-            const endToday = parseTime(endTimeStr);
-            let workedHours = 0;
-            if (now >= startToday && now <= endToday) {
-                workedHours = (now - startToday) / (1000 * 60 * 60);
-            } else if (now > endToday) {
-                workedHours = calculateWorkHours(startTimeStr, endTimeStr);
-            }
-            document.getElementById('worked-hours').textContent = `${workedHours.toFixed(1)} 小时`;
+            const start = parseTime(startTimeStr);
+            const end = parseTime(endTimeStr);
+            let hours = 0;
+            if (now >= start && now <= end) hours = (now - start) / 3600000;
+            else if (now > end) hours = calcWorkHours();
+            document.getElementById('worked-hours').textContent = hours.toFixed(1) + ' 小时';
         }
-        
+
         function updateDate() {
             const now = new Date();
-            const options = { month: 'long', day: 'numeric', weekday: 'long' };
-            document.getElementById('current-date').textContent = 
-                now.toLocaleDateString(currentLang === 'zh' ? 'zh-CN' : 'en-US', options);
+            const opt = { weekday: 'long', month: 'long', day: 'numeric' };
+            document.getElementById('current-date').textContent = now.toLocaleDateString(currentLang === 'zh' ? 'zh-CN' : 'en-US', opt);
         }
-        
+
         function updateCurrency() {
-            const currency = translations[currentLang].currency;
-            document.getElementById('salary-currency').textContent = currency;
-            document.getElementById('today-unit').textContent = currency;
+            const cur = translations[currentLang].currency;
+            document.getElementById('salary-currency').textContent = cur;
+            document.getElementById('today-unit').textContent = cur;
         }
-        
+
         function updateAll() {
             monthlySalary = parseFloat(document.getElementById('monthly-input').value) || 12000;
             startTimeStr = document.getElementById('start-time').value || "09:00";
             endTimeStr = document.getElementById('end-time').value || "18:00";
             updateStats();
-            updateTodayEarnings();
-            updateProgress();
+            updateToday();
             updateWorkedHours();
         }
-        
-        function createStatCards() {
-            const container = document.getElementById('stats-grid');
-            container.innerHTML = `
+
+        function createCards() {
+            document.getElementById('stats-grid').innerHTML = `
                 <div class="card bg-[#16213e] rounded-3xl p-6 border border-[#F9A825]/20">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="text-3xl">📅</div>
-                        <div id="daily-unit" class="text-xs uppercase tracking-widest px-3 py-1 bg-[#0f172a] rounded-full text-[#F9A825]"></div>
+                    <div class="flex justify-between mb-4">
+                        <span class="text-3xl">📅</span>
+                        <span id="daily-unit" class="text-xs px-4 py-1 bg-[#0f172a] rounded-full text-[#F9A825]"></span>
                     </div>
-                    <div id="daily-value" class="text-4xl font-bold number gold-text">400.00</div>
-                    <div id="daily-label" class="text-gray-400 text-sm mt-1"></div>
+                    <div id="daily-value" class="text-4xl font-bold gold-text">400.00</div>
+                    <div id="daily-label" class="text-gray-400 text-sm"></div>
                 </div>
                 <div class="card bg-[#16213e] rounded-3xl p-6 border border-[#F9A825]/20">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="text-3xl">⏰</div>
-                        <div id="hourly-unit" class="text-xs uppercase tracking-widest px-3 py-1 bg-[#0f172a] rounded-full text-[#F9A825]"></div>
+                    <div class="flex justify-between mb-4">
+                        <span class="text-3xl">⏰</span>
+                        <span id="hourly-unit" class="text-xs px-4 py-1 bg-[#0f172a] rounded-full text-[#F9A825]"></span>
                     </div>
-                    <div id="hourly-value" class="text-4xl font-bold number gold-text">50.00</div>
-                    <div id="hourly-label" class="text-gray-400 text-sm mt-1"></div>
+                    <div id="hourly-value" class="text-4xl font-bold gold-text">50.00</div>
+                    <div id="hourly-label" class="text-gray-400 text-sm"></div>
                 </div>
                 <div class="card bg-[#16213e] rounded-3xl p-6 border border-[#F9A825]/20">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="text-3xl">⌛</div>
-                        <div id="min-unit" class="text-xs uppercase tracking-widest px-3 py-1 bg-[#0f172a] rounded-full text-[#F9A825]"></div>
+                    <div class="flex justify-between mb-4">
+                        <span class="text-3xl">⌛</span>
+                        <span id="min-unit" class="text-xs px-4 py-1 bg-[#0f172a] rounded-full text-[#F9A825]"></span>
                     </div>
-                    <div id="min-value" class="text-4xl font-bold number gold-text">0.83</div>
-                    <div id="min-label" class="text-gray-400 text-sm mt-1"></div>
+                    <div id="min-value" class="text-4xl font-bold gold-text">0.83</div>
+                    <div id="min-label" class="text-gray-400 text-sm"></div>
                 </div>
                 <div class="card bg-[#16213e] rounded-3xl p-6 border border-[#F9A825]/20">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="text-3xl">⚡</div>
-                        <div id="sec-unit" class="text-xs uppercase tracking-widest px-3 py-1 bg-[#0f172a] rounded-full text-[#F9A825]"></div>
+                    <div class="flex justify-between mb-4">
+                        <span class="text-3xl">⚡</span>
+                        <span id="sec-unit" class="text-xs px-4 py-1 bg-[#0f172a] rounded-full text-[#F9A825]"></span>
                     </div>
-                    <div id="sec-value" class="text-4xl font-bold number gold-text">0.0139</div>
-                    <div id="sec-label" class="text-gray-400 text-sm mt-1"></div>
+                    <div id="sec-value" class="text-4xl font-bold gold-text">0.0139</div>
+                    <div id="sec-label" class="text-gray-400 text-sm"></div>
                 </div>
             `;
         }
-        
+
         function updateLanguage() {
             const t = translations[currentLang];
             document.getElementById('title').textContent = t.title;
@@ -386,45 +321,42 @@
             document.getElementById('progress-label').textContent = t.progressLabel;
             document.getElementById('today-date-label').textContent = t.todayDate;
             document.getElementById('work-hours-label').textContent = t.workHours;
-            
+
             document.getElementById('daily-label').textContent = t.daily;
             document.getElementById('hourly-label').textContent = t.hourly;
             document.getElementById('min-label').textContent = t.perMin;
             document.getElementById('sec-label').textContent = t.perSec;
-            
+
             document.getElementById('daily-unit').textContent = t.unitDay;
             document.getElementById('hourly-unit').textContent = t.unitHour;
             document.getElementById('min-unit').textContent = t.unitMin;
             document.getElementById('sec-unit').textContent = t.unitSec;
-            
+
             document.getElementById('lang-text').textContent = currentLang === 'zh' ? 'EN' : '中';
             updateCurrency();
         }
-        
+
         function toggleLanguage() {
             currentLang = currentLang === 'zh' ? 'en' : 'zh';
             updateLanguage();
             updateAll();
         }
-        
-        function startLiveUpdate() {
+
+        function startTimer() {
             setInterval(() => {
-                updateTodayEarnings();
-                updateProgress();
+                updateToday();
                 updateWorkedHours();
                 updateDate();
             }, 1000);
         }
-        
-        function initialize() {
-            createStatCards();
+
+        window.onload = () => {
+            createCards();
             updateLanguage();
             updateAll();
             updateDate();
-            startLiveUpdate();
-        }
-        
-        window.onload = initialize;
+            startTimer();
+        };
     </script>
 </body>
 </html>
