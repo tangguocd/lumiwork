@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salary Live Counter</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;display=swap');
+        
+        :root {
+            --bg: #0b0b1a;
+            --surface: #141428;
+            --surface-r: #1c1c34;
+            --border: #2a2a48;
+            --primary: #6b9dff;
+            --primary-dim: #6b9dff18;
+            --gold: #f5c842;
+            --gold-glow: #f5c84240;
+            --text: #eaeaff;
+            --text-dim: #8a8ab0;
+            --text-muted: #555577;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container { max-width: 1200px; margin: 0 auto; }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .title {
+            font-size: 2.3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .lang-toggle {
+            background: transparent;
+            border: 1px solid var(--primary-dim);
+            color: var(--primary);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            min-height: 34px;
+        }
+        
+        .lang-toggle:hover {
+            background: var(--primary-dim);
+        }
+        
+        .main {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 30px;
+        }
+        
+        @media (max-width: 992px) {
+            .main { grid-template-columns: 1fr; }
+        }
+        
+        .input-panel {
+            background: var(--surface);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid var(--border);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+        
+        .card {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.25s ease;
+            border: 1px solid var(--border);
+        }
+        
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px var(--primary-dim);
+        }
+        
+        .card-label { font-size: 0.95rem; color: var(--text-dim); margin-bottom: 8px; }
+        .card-value { 
+            font-size: 1.85rem; font-weight: 700; color: var(--gold); 
+        }
+        
+        .today-earnings {
+            background: var(--surface-r);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 35px 25px;
+            text-align: center;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .today-label { font-size: 1.1rem; color: var(--text-dim); margin-bottom: 10px; }
+        .today-amount {
+            font-size: 3.2rem;
+            font-weight: 800;
+            color: var(--gold);
+            text-shadow: 0 0 20px var(--gold-glow);
+            margin: 12px 0;
+        }
+        
+        .progress-container { margin-top: 20px; }
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+        }
+        .progress-bar {
+            height: 12px;
+            background: #334155;
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary), #8b5cf6);
+            width: 0%;
+            transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        .inputs { display: flex; flex-direction: column; gap: 20px; }
+        .input-group { display: flex; flex-direction: column; gap: 8px; }
+        
+        label { font-weight: 500; color: #ccc; }
+        
+        input, select {
+            padding: 14px 16px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: white;
+            font-size: 1.1rem;
+        }
+        
+        input:focus, select:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+        
+        .time-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .adsense {
+            margin: 30px auto;
+            max-width: 728px;
+            height: 90px;
+            background: rgba(255,255,255,0.05);
+            border: 2px dashed #555;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+        }
+        
+        footer { text-align: center; margin-top: 40px; color: var(--text-muted); font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div style="display:flex;align-items:center;gap:16px">
+                <a href="index.html" style="color:var(--text-dim);text-decoration:none;font-size:0.9rem">← Back</a>
+                <div class="title" id="page-title">Salary Live Counter</div>
+            </div>
+            <button class="lang-toggle" id="lang-btn">🌐 <span id="lang-text">中文</span></button>
+        </header>
+
+        <div class="main">
+            <div class="input-panel">
+                <div class="inputs">
+                    <div class="input-group">
+                        <label id="monthly-label">Monthly Salary</label>
+                        <div style="position: relative;">
+                            <span style="position: absolute; left: 16px; top: 14px; color: var(--gold); font-weight: bold;" id="currency-symbol">$</span>
+                            <input type="number" id="monthly-salary" value="12000" style="padding-left: 50px; width: 100%;">
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label id="workdays-label">Working Days per Month</label>
+                        <input type="number" id="workdays" value="22" min="1" max="31">
+                    </div>
+
+                    <div class="time-inputs">
+                        <div class="input-group">
+                            <label id="start-label">Start Time</label>
+                            <input type="time" id="start-time" value="09:00">
+                        </div>
+                        <div class="input-group">
+                            <label id="end-label">End Time</label>
+                            <input type="time" id="end-time" value="18:00">
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 35px;">
+                    <div class="today-earnings">
+                        <div class="today-label" id="today-label">Today's Earnings</div>
+                        <div class="today-amount" id="today-amount">$0.00</div>
+                        <div style="font-size:0.9rem;color:var(--text-dim);margin-top:4px" id="per-second-ticker">每秒跳动 · 实时累计</div>
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span id="progress-text">Work Progress</span>
+                                <span id="progress-percent">0%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progress-fill"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="stats-grid">
+                    <div class="card">
+                        <div class="card-label" id="daily-label">Daily</div>
+                        <div class="card-value" id="daily-value">$545.45</div>
+                        <div class="unit" id="daily-unit">$/day</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-label" id="hourly-label">Hourly</div>
+                        <div class="card-value" id="hourly-value">$60.61</div>
+                        <div class="unit" id="hourly-unit">$/hr</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-label" id="minute-label">Per Minute</div>
+                        <div class="card-value" id="minute-value">$1.01</div>
+                        <div class="unit" id="minute-unit">$/min</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-label" id="second-label">Per Second</div>
+                        <div class="card-value" id="second-value">$0.017</div>
+                        <div class="unit" id="second-unit">$/sec</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 25px; background: var(--surface); border-radius: 16px; padding: 20px; font-size: 0.9rem; color: var(--text-dim); display:flex;flex-direction:column;gap:10px">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span id="work-hours-label">Working hours per day:</span>
+                        <span id="work-hours-value">9.0 hours</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span id="workdays-bottom-label">Working days per month:</span>
+                        <span id="workdays-bottom-value">22 days</span>
+                    </div>
+                    <div style="border-top:1px solid var(--border);padding-top:10px;display:flex;justify-content:space-between">
+                        <span id="annual-label">📅 Annual</span>
+                        <span id="annual-value" style="color:var(--gold);font-weight:600">$144,000</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between">
+                        <span id="dayend-label">⏰ Day end</span>
+                        <span id="countdown-value" style="color:var(--primary)">--h --m --s</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between">
+                        <span id="rest-label">☕ Coffee break at</span>
+                        <span id="rest-value" style="color:var(--accent)">--:--</span>
+                    </div>
+                    <div style="border-top:1px solid var(--border);padding-top:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+                        <span id="coffee-label" style="white-space:nowrap">☕ Cost $</span>
+                        <input type="number" id="coffee-price" value="5" style="width:70px;padding:6px 10px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.85rem">
+                        <span id="coffee-result" style="color:var(--gold)">= 4m 57s of work</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="adsense">Google AdSense Placeholder</div>
+        <footer><p>Salary Live Counter · <a href="index.html" style="color:var(--text-dim);text-decoration:none">Back to lumiwork</a></p></footer>
+    </div>
+
+    <script>
+        const translations = { /* 保持不变 */ 
+            en: {
+                pageTitle: "Salary Live Counter", langText: "中文",
+                monthlyLabel: "Monthly Salary", workdaysLabel: "Working Days per Month",
+                startLabel: "Start Time", endLabel: "End Time",
+                todayLabel: "Today's Earnings", progressText: "Work Progress",
+                dailyLabel: "Daily", hourlyLabel: "Hourly",
+                minuteLabel: "Per Minute", secondLabel: "Per Second",
+                dailyUnit: "$/day", hourlyUnit: "$/hr",
+                minuteUnit: "$/min", secondUnit: "$/sec",
+                workHoursLabel: "Working hours per day:",
+                workdaysBottomLabel: "Working days per month:",
+                annualLabel: "📅 Annual", dayendLabel: "⏰ Day end",
+                restLabel: "☕ Coffee break at", coffeeLabel: "☕ Cost $"
+            },
+            zh: {
+                pageTitle: "工资实时计算器", langText: "English",
+                monthlyLabel: "月薪", workdaysLabel: "每月工作天数",
+                startLabel: "上班时间", endLabel: "下班时间",
+                todayLabel: "今日已赚", progressText: "今日工作进度",
+                dailyLabel: "日薪", hourlyLabel: "时薪",
+                minuteLabel: "每分钟", secondLabel: "每秒",
+                dailyUnit: "元/天", hourlyUnit: "元/小时",
+                minuteUnit: "元/分钟", secondUnit: "元/秒",
+                workHoursLabel: "每日工作时长：",
+                workdaysBottomLabel: "每月工作天数：",
+                annualLabel: "📅 年收入", dayendLabel: "⏰ 下班倒计时",
+                restLabel: "☕ 休息提醒", coffeeLabel: "☕ 咖啡价格 ¥"
+            }
+        };
+
+        let currentLang = 'en';
+        let currency = '$';
+
+        const monthlyInput = document.getElementById('monthly-salary');
+        const workdaysInput = document.getElementById('workdays');
+        const startTimeInput = document.getElementById('start-time');
+        const endTimeInput = document.getElementById('end-time');
+        const langBtn = document.getElementById('lang-btn');
+
+        function parseTime(timeStr) {
+            const [h, m] = timeStr.split(':').map(Number);
+            return { hour: h || 0, minute: m || 0 };
+        }
+
+        function calculateRates() {
+            const monthly = parseFloat(monthlyInput.value) || 12000;
+            const workdays = Math.max(1, parseFloat(workdaysInput.value) || 22);
+            
+            const start = parseTime(startTimeInput.value);
+            const end = parseTime(endTimeInput.value);
+            
+            let workMinutes = (end.hour * 60 + end.minute) - (start.hour * 60 + start.minute);
+            if (workMinutes < 30) workMinutes = 30; // 最小30分钟
+            
+            const workHours = workMinutes / 60;
+            
+            const daily = monthly / workdays;
+            const hourly = daily / workHours;
+            const perMinute = hourly / 60;
+            const perSecond = perMinute / 60;
+            
+            return { daily, hourly, perMinute, perSecond, workHours, workdays, workMinutes };
+        }
+
+        function formatMoney(num) {
+            return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function getTodayEarnings(rates) {
+            const now = new Date();
+            const currentMinutes = now.getHours() * 60 + now.getMinutes() + now.getSeconds() / 60;
+            const start = parseTime(startTimeInput.value);
+            const end = parseTime(endTimeInput.value);
+            
+            const startMinutes = start.hour * 60 + start.minute;
+            const endMinutes = end.hour * 60 + end.minute;
+            
+            let elapsedMinutes = 0;
+            
+            if (currentMinutes >= startMinutes && currentMinutes <= endMinutes) {
+                elapsedMinutes = currentMinutes - startMinutes;
+            } else if (currentMinutes > endMinutes) {
+                elapsedMinutes = endMinutes - startMinutes; // 已下班
+            }
+            
+            const earnings = elapsedMinutes * rates.perMinute;
+            let progress = (elapsedMinutes / rates.workMinutes) * 100;
+            progress = Math.max(0, Math.min(100, progress));
+            
+            return { earnings, progress };
+        }
+
+        function updateDisplay() {
+            const rates = calculateRates();
+            const today = getTodayEarnings(rates);
+            
+            document.getElementById('daily-value').textContent = currency + formatMoney(rates.daily);
+            document.getElementById('hourly-value').textContent = currency + formatMoney(rates.hourly);
+            document.getElementById('minute-value').textContent = currency + formatMoney(rates.perMinute);
+            document.getElementById('second-value').textContent = currency + formatMoney(rates.perSecond);
+            
+            document.getElementById('today-amount').textContent = currency + today.earnings.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+            document.getElementById('per-second-ticker').textContent = currency + today.earnings.toLocaleString('en-US', {minimumFractionDigits:6, maximumFractionDigits:6});
+            document.getElementById('per-second-ticker').style.color = 'var(--text-dim)';
+            document.getElementById('progress-fill').style.width = today.progress + '%';
+            document.getElementById('progress-percent').textContent = Math.round(today.progress) + '%';
+            
+            document.getElementById('work-hours-value').textContent = rates.workHours.toFixed(1) + ' hours';
+            document.getElementById('workdays-bottom-value').textContent = rates.workdays + ' days';
+            
+            const now = new Date();
+            const end = parseTime(endTimeInput.value);
+            const start = parseTime(startTimeInput.value);
+            // Annual projection
+            document.getElementById('annual-value').textContent = currency + (rates.daily * rates.workdays * 12).toLocaleString('en-US', {minimumFractionDigits:0, maximumFractionDigits:0});
+            
+            // Countdown to end of day
+            const now_min2 = now.getHours() * 60 + now.getMinutes() + now.getSeconds() / 60;
+            const end_min2 = end.hour * 60 + end.minute;
+            const remain_min2 = Math.max(0, end_min2 - now_min2);
+            if (now_min2 >= end_min2) {
+                document.getElementById('countdown-value').textContent = '\uD83C\uDF89 Done!';
+            } else {
+                const rh = Math.floor(remain_min2 / 60);
+                const rm = Math.floor(remain_min2 % 60);
+                const rs = Math.floor((remain_min2 % 1) * 60);
+                document.getElementById('countdown-value').textContent = rh + 'h ' + rm + 'm ' + rs + 's';
+            }
+            
+            // Rest reminder
+            const start_min2 = start.hour * 60 + start.minute;
+            const elapsed_from_start = Math.max(0, now_min2 - start_min2);
+            const cycle_min = elapsed_from_start % 60;
+            if (cycle_min >= 0 && cycle_min < 55) {
+                const nb_min = start_min2 + Math.floor(elapsed_from_start / 60) * 60 + 55;
+                const nbh = Math.floor(nb_min / 60);
+                const nbm = Math.floor(nb_min % 60);
+                document.getElementById('rest-value').textContent = nbh + ':' + (nbm < 10 ? '0' : '') + nbm;
+            } else {
+                document.getElementById('rest-value').textContent = '\u2615 Take 5!';
+            }
+            
+            // Coffee cost
+            const coffeePrice = parseFloat(document.getElementById('coffee-price').value) || 5;
+            const coffeeSecs = coffeePrice / rates.perSecond;
+            const coffeeTxt = currentLang==='zh' ? '分钟' : 'm ';
+            document.getElementById('coffee-result').textContent = '= ' + Math.floor(coffeeSecs/60) + coffeeTxt + Math.floor(coffeeSecs%60) + (currentLang==='zh'?'秒的工作':'s of work');
+            
+            const isZh = currentLang === 'zh';
+            document.getElementById('daily-unit').textContent = isZh ? '元/天' : '$/day';
+            document.getElementById('hourly-unit').textContent = isZh ? '元/小时' : '$/hr';
+            document.getElementById('minute-unit').textContent = isZh ? '元/分钟' : '$/min';
+            document.getElementById('second-unit').textContent = isZh ? '元/秒' : '$/sec';
+        }
+
+        function updateLanguage(lang) {
+            currentLang = lang;
+            const t = translations[lang];
+            document.getElementById('page-title').textContent = t.pageTitle;
+            document.getElementById('lang-text').textContent = t.langText;
+            
+            document.getElementById('monthly-label').textContent = t.monthlyLabel;
+            document.getElementById('workdays-label').textContent = t.workdaysLabel;
+            document.getElementById('start-label').textContent = t.startLabel;
+            document.getElementById('end-label').textContent = t.endLabel;
+            document.getElementById('today-label').textContent = t.todayLabel;
+            document.getElementById('progress-text').textContent = t.progressText;
+            
+            document.getElementById('daily-label').textContent = t.dailyLabel;
+            document.getElementById('hourly-label').textContent = t.hourlyLabel;
+            document.getElementById('minute-label').textContent = t.minuteLabel;
+            document.getElementById('second-label').textContent = t.secondLabel;
+            
+            document.getElementById('work-hours-label').textContent = t.workHoursLabel;
+            document.getElementById('workdays-bottom-label').textContent = t.workdaysBottomLabel;
+            document.getElementById('annual-label').textContent = t.annualLabel;
+            document.getElementById('dayend-label').textContent = t.dayendLabel;
+            document.getElementById('rest-label').textContent = t.restLabel;
+            document.getElementById('coffee-label').textContent = t.coffeeLabel;
+        }
+
+        function init() {
+            // 恢复用户上次保存的值
+            const savedIds = ['monthly-salary','workdays','start-time','end-time'];
+            savedIds.forEach(id => {
+                const saved = localStorage.getItem('salary_'+id);
+                if(saved) document.getElementById(id).value = saved;
+            });
+            document.getElementById('currency-symbol').textContent = currency;
+            updateLanguage('en');
+            
+            const coffeeInput = document.getElementById('coffee-price');
+            const inputs = [monthlyInput, workdaysInput, startTimeInput, endTimeInput, coffeeInput];
+            inputs.forEach(input => {
+                input.addEventListener('input', () => {
+                    localStorage.setItem('salary_'+input.id, input.value);
+                    updateDisplay();
+                });
+                input.addEventListener('change', () => {
+                    localStorage.setItem('salary_'+input.id, input.value);
+                    updateDisplay();
+                });
+            });
+            
+            langBtn.addEventListener('click', () => {
+                const newLang = currentLang === 'en' ? 'zh' : 'en';
+                currency = newLang === 'zh' ? '¥' : '$';
+                document.getElementById('currency-symbol').textContent = currency;
+                updateLanguage(newLang);
+                updateDisplay();
+            });
+            
+            setInterval(updateDisplay, 1000);
+            updateDisplay();
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
